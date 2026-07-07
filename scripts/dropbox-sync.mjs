@@ -103,6 +103,28 @@ async function listFolder(tok, link, path) {
 let warned = {};
 function warnOnce(key, msg) { if (!warned[key]) { warned[key] = true; console.error(msg); } }
 
+// Create (or reuse) a direct Dropbox share link for one file, by its id, so an
+// individual video can be streamed + downloaded from the how-to hub. Best-effort:
+// returns null on failure (the hub falls back to the placeholder download).
+async function fileShareLink(tok, id) {
+  if (!id) return null;
+  try {
+    const r = await rpc(tok, "sharing/list_shared_links", { path: id, direct_only: true });
+    if (r.links && r.links.length) return r.links[0].url;
+  } catch { /* fall through to create */ }
+  try {
+    const c = await rpc(tok, "sharing/create_shared_link_with_settings", { path: id });
+    if (c.url) return c.url;
+  } catch (e) {
+    try {
+      const r2 = await rpc(tok, "sharing/list_shared_links", { path: id, direct_only: true });
+      if (r2.links && r2.links.length) return r2.links[0].url;
+    } catch { /* give up */ }
+    warnOnce("sharelink", "share link failed: " + e.message);
+  }
+  return null;
+}
+
 // Dropbox passes call parameters in the "Dropbox-API-Arg" HTTP header, which must
 // be ASCII. Filenames often contain non-ASCII (e.g. macOS screenshots use U+202F,
 // a narrow no-break space, before AM/PM), so escape every non-ASCII char to \uXXXX
@@ -245,7 +267,7 @@ for (const p of PRODUCTS) {
     for (const f of files) {
       const e = ext(f.name), type = typeOf(e), path = f.relPath || (spec.prefix + "/" + f.name);
       const hash = f.content_hash, size = f.size || 0;
-      let thumb = null, fileRel = null;
+      let thumb = null, fileRel = null, share = null;
       try {
         // Commit the real original (so the browser can download/zip it in
         // portal) for commitFiles products; always commit tiny SVGs since the
@@ -307,10 +329,13 @@ for (const p of PRODUCTS) {
             if (src) { videoFrame(src, join(dir, tn)); if (src === tmp + "." + e) unlinkSync(src); }
           }
           if (existsSync(join(dir, tn))) { thumb = `assets/synced/${p.slug}/${tn}`; keep.add(tn); }
+          // A per-file share link makes the video streamable + downloadable in
+          // the how-to hub (the folder link can't hotlink an individual file).
+          share = await fileShareLink(tok, f.id);
         }
       } catch (err) { warnOnce("gen-" + type, "asset error (" + f.name + "): " + err.message); }
 
-      out.push({ name: f.displayName || f.name.replace(/\.[^.]+$/, ""), type, format: e.toUpperCase(), url: p.link, thumb, file: fileRel });
+      out.push({ name: f.displayName || f.name.replace(/\.[^.]+$/, ""), type, format: e.toUpperCase(), url: p.link, thumb, file: fileRel, link: share || undefined });
     }
     if (out.length) folders[spec.name] = (folders[spec.name] || []).concat(out);  // concat so aliased names merge
   }

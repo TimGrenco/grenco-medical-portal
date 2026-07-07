@@ -246,17 +246,16 @@ window.PORTAL_PRODUCTS.forEach(function (p) {
       p.synced = true;
     }
   });
-  // The how-to videos sync under their own key — fold them into the Elite II
-  // "Videos" folder so they appear in the product's Digital Assets.
-  var vids = SYNCED["Grenco Medical Elite II — Videos"];
-  if (vids && vids.folders) {
-    var elite = window.PORTAL_PRODUCTS.filter(function (x) { return x.name === "Grenco Medical Elite II"; })[0];
-    if (elite) {
-      var all = [];
-      Object.keys(vids.folders).forEach(function (f) { all = all.concat(vids.folders[f] || []); });
-      if (all.length) elite.folders["Videos"] = all;
+  // Build the "How to use videos" hub from the synced "Videos" folder when its
+  // files have playable per-file share links; otherwise keep the Vimeo fallback.
+  window.PORTAL_PRODUCTS.forEach(function (p) {
+    var vids = (p.folders && p.folders["Videos"]) || [];
+    if (vids.some(function (v) { return v.link; })) {
+      p.videos = vids.map(function (v) {
+        return { title: v.name, thumb: v.thumb || null, mp4: v.link || null };
+      });
     }
-  }
+  });
 })();
 
 /* =============================================================================
