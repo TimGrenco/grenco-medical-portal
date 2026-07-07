@@ -44,12 +44,12 @@ const PRODUCTS = [
 ];
 
 // The seven canonical categories, in the order they appear on the portal.
-const FOLDER_ORDER = ["Product Photos", "Lifestyle Photos", "Packaging", "Logos", "Marketing", "Videos", "Documents"];
+const FOLDER_ORDER = ["Product Photos", "Marketing Photos", "Packaging", "Logos", "Marketing", "Videos", "Documents"];
 // Normalize common Dropbox folder-name variants to the canonical names above, so
 // a folder called "Lifestyle" or "Social Videos" still lands in the right bucket.
 const FOLDER_ALIAS = {
   "Product Photo": "Product Photos", "Product Images": "Product Photos", "E-Comm": "Product Photos", "E-Comm Render Photos": "Product Photos",
-  "Lifestyle": "Lifestyle Photos", "Lifestyle Photo": "Lifestyle Photos",
+  "Lifestyle": "Marketing Photos", "Lifestyle Photo": "Marketing Photos", "Lifestyle Photos": "Marketing Photos", "Marketing Photo": "Marketing Photos",
   "Package": "Packaging",
   "Logo": "Logos",
   "Marketing Materials": "Marketing", "In-Store Marketing": "Marketing", "In Store Marketing": "Marketing", "POS": "Marketing", "POS Materials": "Marketing", "Web Banners": "Marketing", "Web Banner": "Marketing", "Banners": "Marketing",

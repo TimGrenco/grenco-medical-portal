@@ -94,7 +94,7 @@ window.PORTAL_PRODUCTS = [
         mkImg("glance-palm.webp"),
         mkImg("elite-ii-device-spec.webp"),
       ],
-      "Lifestyle Photos": [
+      "Marketing Photos": [
         mkImg("everyday-living.webp"),
         mkImg("owner-desk.webp"),
         mkImg("travel-ready-pocket.webp"),

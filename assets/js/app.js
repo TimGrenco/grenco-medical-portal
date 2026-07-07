@@ -58,7 +58,7 @@
   var typeIcon = { image: "photo", video: "video", vector: "vector", pdf: "file" };
   // Folder → icon for the "Browse by category" cards on the product landing.
   var FOLDER_ICON = {
-    "Product Photos": "photo", "Lifestyle Photos": "eye", "Packaging": "stack",
+    "Product Photos": "photo", "Marketing Photos": "eye", "Packaging": "stack",
     "Logos": "vector", "Marketing": "tag", "Videos": "video", "Documents": "file",
   };
 
@@ -185,7 +185,7 @@
   var TYPE_LABELS = {};   // the canonical folder names are already display-ready
   function typeLabel(t) { return TYPE_LABELS[t] || t; }
   // Canonical category order (matches the Dropbox-sync FOLDER_ORDER — 7 folders).
-  var FOLDER_TAB_ORDER = ["Product Photos", "Lifestyle Photos", "Packaging", "Logos", "Marketing", "Videos", "Documents"];
+  var FOLDER_TAB_ORDER = ["Product Photos", "Marketing Photos", "Packaging", "Logos", "Marketing", "Videos", "Documents"];
   function folderRank(f) { var i = FOLDER_TAB_ORDER.indexOf(f); return i < 0 ? 99 : i; }
 
   function buildQuery() {
