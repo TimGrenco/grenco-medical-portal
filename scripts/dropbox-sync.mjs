@@ -222,20 +222,22 @@ for (const p of PRODUCTS) {
   const tmp = join(dir, "_tmp");
 
   const top = await listFolder(tok, p.link, "");
-  const subs = top.filter((e) => e[".tag"] === "folder").map((e) => e.name);
+  const subFolders = top.filter((e) => e[".tag"] === "folder");
 
-  // Folders with subfolders use them as asset groups (like Dash II); a flat
-  // folder buckets its files under `flat` (e.g. the logo set).
+  // Folders with subfolders use them as asset groups; a flat folder buckets its
+  // files under `flat`. `folderLinks` holds a per-category Dropbox download link
+  // so "Download folder" pulls the whole category straight from Dropbox.
   const folderSpecs = [];
-  if (subs.length) {
+  const folderLinks = {};
+  if (subFolders.length) {
     // Map each Dropbox subfolder to its canonical display name, then order by
     // the canonical tab order (aliased/unknown names fall to the end).
-    const specs = subs.map((raw) => ({ raw, disp: FOLDER_ALIAS[raw] || raw }));
+    const specs = subFolders.map((en) => ({ raw: en.name, id: en.id, disp: FOLDER_ALIAS[en.name] || en.name }));
     specs.sort((a, b) => {
       var ia = FOLDER_ORDER.indexOf(a.disp), ib = FOLDER_ORDER.indexOf(b.disp);
       return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
     });
-    for (const { raw, disp } of specs) {
+    for (const { raw, id, disp } of specs) {
       const entries = await listFolder(tok, p.link, "/" + raw);
       const files = [];
       for (const e of entries) if (e[".tag"] === "file") { e.relPath = "/" + raw + "/" + e.name; files.push(e); }
@@ -250,6 +252,8 @@ for (const p of PRODUCTS) {
         }
       }
       folderSpecs.push({ name: disp, prefix: "/" + raw, files });
+      const fl = await fileShareLink(tok, id);   // per-category Dropbox download link
+      if (fl && !folderLinks[disp]) folderLinks[disp] = fl;
     }
   } else {
     folderSpecs.push({ name: p.flat || "Files", prefix: "", files: top.filter((e) => e[".tag"] === "file") });
@@ -329,12 +333,12 @@ for (const p of PRODUCTS) {
             if (src) { videoFrame(src, join(dir, tn)); if (src === tmp + "." + e) unlinkSync(src); }
           }
           if (existsSync(join(dir, tn))) { thumb = `assets/synced/${p.slug}/${tn}`; keep.add(tn); }
-          // A per-file share link makes the video streamable + downloadable in
-          // the how-to hub (the folder link can't hotlink an individual file).
-          share = await fileShareLink(tok, f.id);
         }
       } catch (err) { warnOnce("gen-" + type, "asset error (" + f.name + "): " + err.message); }
 
+      // Every file gets a permanent Dropbox download link so downloads (and
+      // video playback) come straight from Dropbox — not hosted on GitHub.
+      if (f.id) share = await fileShareLink(tok, f.id);
       out.push({ name: f.displayName || f.name.replace(/\.[^.]+$/, ""), type, format: e.toUpperCase(), url: p.link, thumb, file: fileRel, link: share || undefined });
     }
     if (out.length) folders[spec.name] = (folders[spec.name] || []).concat(out);  // concat so aliased names merge
@@ -344,11 +348,11 @@ for (const p of PRODUCTS) {
   for (const fn of readdirSync(dir)) if (fn !== "files" && !keep.has(fn)) { try { unlinkSync(join(dir, fn)); } catch {} }
   for (const fn of readdirSync(filesDir)) if (!keepFiles.has(fn)) { try { unlinkSync(join(filesDir, fn)); } catch {} }
 
-  synced[p.name] = { folders, dropbox: dlLink(p.link) };
+  synced[p.name] = { folders, folderLinks, dropbox: dlLink(p.link) };
   const total = Object.values(folders).reduce((n, a) => n + a.length, 0);
   const withThumb = Object.values(folders).reduce((n, a) => n + a.filter((x) => x.thumb).length, 0);
-  const withFile = Object.values(folders).reduce((n, a) => n + a.filter((x) => x.file).length, 0);
-  console.log(`${p.name}: ${folderSpecs.length} folders, ${total} files, ${withThumb} thumbnails, ${withFile} downloadable`);
+  const withLink = Object.values(folders).reduce((n, a) => n + a.filter((x) => x.link).length, 0);
+  console.log(`${p.name}: ${folderSpecs.length} folders, ${total} files, ${withThumb} thumbnails, ${withLink} with Dropbox links, ${Object.keys(folderLinks).length} folder links`);
 }
 
 writeFileSync("assets/data/synced.js", "window.PORTAL_SYNCED = " + JSON.stringify(synced, null, 2) + ";\n");
