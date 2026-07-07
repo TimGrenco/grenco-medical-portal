@@ -35,7 +35,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260707m" />
+  <!-- Cache-busting: stamp a fresh version each load so edits show up on a normal
+       refresh (no hard-refresh needed). Content-hashed images still cache normally. -->
+  <script>document.write('<link rel="stylesheet" href="assets/css/styles.css?v=' + Date.now() + '">');</script>
+  <noscript><link rel="stylesheet" href="assets/css/styles.css" /></noscript>
 </head>
 <body>
   <h1 class="sr-only">Grenco Medical Brand &amp; Product Assets Portal</h1>
@@ -166,8 +169,14 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
   </button>
 
-  <script src="assets/data/synced.js?v=20260707m"></script>
-  <script src="assets/data/assets.js?v=20260707m"></script>
-  <script src="assets/js/app.js?v=20260707m"></script>
+  <!-- Ordered, cache-busted load (synced → assets → app). Fresh code every refresh. -->
+  <script>
+    (function () {
+      var v = Date.now();
+      ["assets/data/synced.js", "assets/data/assets.js", "assets/js/app.js"].forEach(function (src) {
+        document.write('<script src="' + src + '?v=' + v + '"><\/script>');
+      });
+    })();
+  </script>
 </body>
 </html>
