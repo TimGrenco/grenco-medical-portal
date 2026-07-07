@@ -1493,7 +1493,11 @@
       if (copyDesc) copyDesc.addEventListener("click", function () {
         copyText(((p.info && p.info.fullDescription) || []).join("\n\n"), "Description copied");
       });
-      $("#dl-folder").addEventListener("click", function () { downloadFiles(folderFiles(), active); });
+      $("#dl-folder").addEventListener("click", function () {
+        var fl = p.folderLinks && p.folderLinks[active];
+        if (fl) { toast("Opening Dropbox download…"); window.open(dropboxZipUrl(fl), "_blank", "noopener"); }
+        else downloadFiles(folderFiles(), active);
+      });
       $("#sel-all").addEventListener("change", function (e) {
         var on = e.target.checked;
         folderFiles().forEach(function (f) { toggle(f, on); });
@@ -1756,7 +1760,7 @@
         badge = '<span class="play-badge">' + icon("play") + "</span>";
       } else if (hasImg) {
         lbAttr = ' data-lbidx="' + items.length + '"';
-        items.push({ src: file.thumb, name: fileLabel(file), url: file.url || "#", file: file.file || null });
+        items.push({ src: file.thumb, name: fileLabel(file), url: file.url || "#", file: fileDl(file) || null });
       }
       var thumb = hasImg
         ? '<img src="' + file.thumb + '" alt="' + file.name + '" loading="lazy" onerror="this.parentNode.innerHTML=window.__icon(\'' + (typeIcon[file.type] || "file") + '\')"/>' + badge
@@ -1769,7 +1773,7 @@
           '<div class="gbar"><span class="gn">' + fileLabel(file) + '</span>' +
           '<span class="ga">' +
             '<span data-copy="' + (file.url || "#") + '" title="Copy link">' + icon("link") + "</span>" +
-            '<span data-dl="' + (file.file || file.url || "#") + '" data-name="' + fileLabel(file) + '"' + (file.file ? ' data-direct="1"' : "") + ' title="' + (ext ? "Watch on YouTube" : "Download") + '">' + icon(ext ? "play" : "download") + "</span>" +
+            '<span data-dl="' + (ext ? (file.url || "#") : (fileDl(file) || "#")) + '" data-name="' + fileLabel(file) + '" title="' + (ext ? "Watch on YouTube" : "Download") + '">' + icon(ext ? "play" : "download") + "</span>" +
           "</span></div>" +
         "</div>"
       );
@@ -1802,10 +1806,7 @@
       });
     });
     $$("[data-dl]", $("#gallery")).forEach(function (b) {
-      b.addEventListener("click", function () {
-        if (b.getAttribute("data-direct")) directDownload(b.getAttribute("data-dl"), b.getAttribute("data-name"));
-        else downloadOne(b.getAttribute("data-dl"));
-      });
+      b.addEventListener("click", function () { directDownload(b.getAttribute("data-dl"), b.getAttribute("data-name")); });
     });
     $$("[data-copy]", $("#gallery")).forEach(function (b) {
       b.addEventListener("click", function () {
@@ -1853,8 +1854,25 @@
   // A folder / selection: fetch the real synced files and bundle them into a
   // .zip in the browser. Files too large to host (big videos) come via the
   // Dropbox "Download all" instead.
+  // Preferred download URL for one file: its own Dropbox link (dl=1), else a
+  // committed original (legacy fallback), else the folder link. This portal is a
+  // front-end to Dropbox — files download straight from there, not from GitHub.
+  function fileDl(f) {
+    if (f && f.link) return dropboxZipUrl(f.link);
+    if (f && f.file) return f.file;
+    return (f && f.url) || "";
+  }
   function downloadFiles(files, label) {
     if (!files || !files.length) { toast("Select at least one asset first"); return; }
+    // Dropbox-linked files → download each straight from Dropbox (staggered so
+    // the browser permits the batch). Nothing is hosted on GitHub.
+    var linked = files.filter(function (f) { return f && f.link; });
+    if (linked.length) {
+      toast("Downloading " + linked.length + " file" + (linked.length === 1 ? "" : "s") + " from Dropbox…");
+      linked.forEach(function (f, i) { setTimeout(function () { directDownload(dropboxZipUrl(f.link), fileLabel(f)); }, i * 700); });
+      return;
+    }
+    // Legacy fallback: committed originals zipped in-browser.
     var dl = files.filter(function (f) { return f && f.file; });
     var skipped = files.length - dl.length;
     if (!dl.length) {

@@ -32,13 +32,12 @@ if (!APP_KEY || !APP_SECRET || !REFRESH) {
 // One shared folder holds the seven canonical asset categories (below).
 const PRODUCTS = [
   {
-    // `commitFiles` = commit the real originals so the browser can download/zip
-    // them in-portal (the Elite II is the launch showcase). Keeps the published
-    // site under GitHub Pages' 1 GB ceiling since it's a single product.
-    // Videos are thumbnail-only (downloaded via the Dropbox "Download all" link).
+    // Dropbox-backed portal: originals are NOT hosted on GitHub. Only thumbnails
+    // (and tiny SVG logos, which double as their own thumbnail) are committed;
+    // every file downloads from its own Dropbox link. `commitFiles: false`.
     name: "Grenco Medical Elite II",
     slug: "elite-ii",
-    commitFiles: true,
+    commitFiles: false,
     link: "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
   },
 ];
