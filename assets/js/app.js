@@ -1898,7 +1898,7 @@
   // ---- wire up the static shell -------------------------------------------
   function init() {
     // hero text from config
-    $("#hero-tagline").textContent = CFG.tagline;
+    var heroTagline = $("#hero-tagline"); if (heroTagline) heroTagline.textContent = CFG.tagline;
     var heroIntro = $("#hero-intro"); if (heroIntro) heroIntro.textContent = CFG.intro;
     $$(".req-mail").forEach(function (a) { a.href = "mailto:" + CFG.requestEmail; });
 
