@@ -78,7 +78,7 @@ window.PORTAL_PRODUCTS = [
     brand: "grencomedical",
     category: "Therapeutic vaporiser",
     type: "Therapeutic vaporiser",
-    cover: "assets/elite-ii-hero.webp",
+    cover: "assets/elite-ii-hero-screen.webp",
     added: "2026-06-09",
     oneSheet: "", // documents coming soon
     // Seed folders — the seven canonical categories. The Dropbox sync overlays

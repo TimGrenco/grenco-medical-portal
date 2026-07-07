@@ -44,7 +44,7 @@ cx0, cy0 = W - CARD - 70, (H - CARD) // 2
 card = Image.new("RGBA", (CARD, CARD), MIST + (255,))
 rmask = Image.new("L", (CARD, CARD), 0)
 ImageDraw.Draw(rmask).rounded_rectangle([0, 0, CARD, CARD], radius=34, fill=255)
-prod = Image.open("assets/elite-ii-hero.webp").convert("RGBA")
+prod = Image.open("assets/elite-ii-hero-screen.webp").convert("RGBA")
 pad = 26
 fit = CARD - pad * 2
 prod.thumbnail((fit, fit), Image.LANCZOS)
