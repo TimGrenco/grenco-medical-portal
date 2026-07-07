@@ -758,6 +758,19 @@
       "</div>";
   }
 
+  // Pharmacy Locator call-to-action band — shown at the bottom of the product
+  // landing. Pharmacies request to be added to the locator on grencomedical.com.
+  function locatorEntryHTML() {
+    return '<div class="locator-card" id="locator-entry">' +
+        '<div class="locator-copy">' +
+          '<div class="locator-eyebrow">Pharmacies</div>' +
+          "<h2>Get your pharmacy on our Pharmacy Locator</h2>" +
+          "<p>Dispensing the Grenco Medical Elite II? Request to be added to our official pharmacy locator on grencomedical.com so patients can find you.</p>" +
+        "</div>" +
+        '<a class="btn lg" href="#locator">' + icon("mapPin") + " Request to be listed</a>" +
+      "</div>";
+  }
+
   // Bottom-of-page entry box → opens the dedicated Additional Products page.
   function renderAdditionalEntry() {
     var box = $("#additional-entry"); if (!box) return;
@@ -1188,15 +1201,15 @@
   function storeBlockHTML(n) {
     return '<div class="loc-store" data-store>' +
         '<div class="loc-store-h">' +
-          '<span class="loc-store-n">Store <span class="loc-store-i">' + n + "</span></span>" +
-          '<button class="loc-remove" data-remove title="Remove this store">' + icon("trash") + " Remove</button>" +
+          '<span class="loc-store-n">Pharmacy <span class="loc-store-i">' + n + "</span></span>" +
+          '<button class="loc-remove" data-remove title="Remove this pharmacy">' + icon("trash") + " Remove</button>" +
         "</div>" +
         '<div class="loc-fields">' +
-          '<label class="mat-field loc-wide"><span>Store Name</span><input type="text" data-f="name" placeholder="Store name"/></label>' +
-          '<label class="mat-field loc-wide"><span>Address</span><input type="text" data-f="address" placeholder="123 Main St, City, State ZIP"/></label>' +
+          '<label class="mat-field loc-wide"><span>Pharmacy Name</span><input type="text" data-f="name" placeholder="Pharmacy name"/></label>' +
+          '<label class="mat-field loc-wide"><span>Address</span><input type="text" data-f="address" placeholder="123 Main St, Suburb, State, Postcode"/></label>' +
           '<div class="loc-row">' +
             '<label class="mat-field"><span>Phone</span><input type="tel" data-f="phone" placeholder="(555) 555-5555"/></label>' +
-            '<label class="mat-field"><span>Website</span><input type="text" data-f="website" placeholder="yourstore.com"/></label>' +
+            '<label class="mat-field"><span>Website</span><input type="text" data-f="website" placeholder="yourpharmacy.com.au"/></label>' +
           "</div>" +
         "</div>" +
       "</div>";
@@ -1212,18 +1225,18 @@
     var pg = $("#locator-page");
     pg.style.display = "block";
     animateIn(pg);
-    setTitle("Pharmacy / Partner Info Request");
+    setTitle("Pharmacy Locator Request");
     window.scrollTo(0, 0);
 
     pg.innerHTML =
-      '<button class="back" id="loc-back">' + icon("arrowLeft") + " Back to library</button>" +
-      '<div class="section-head"><h2>Request Pharmacy / Partner Info</h2></div>' +
-      '<p class="mat-lead">' + icon("info") + "<span>Add each pharmacy or location you'd like listed, then send your request. Have more than one location? Use <strong>Add another store</strong> to include them all.</span>" +
+      '<button class="back" id="loc-back">' + icon("arrowLeft") + " Back to portal</button>" +
+      '<div class="section-head"><h2>Pharmacy Locator Request</h2></div>' +
+      '<p class="mat-lead">' + icon("info") + "<span>Add each pharmacy you'd like listed on the official locator at grencomedical.com, then send your request. Have more than one location? Use <strong>Add another pharmacy</strong> to include them all.</span>" +
       "</p>" +
       '<div class="mat-layout">' +
         '<div class="loc-left">' +
           '<div class="loc-stores" id="loc-stores">' + storeBlockHTML(1) + "</div>" +
-          '<button class="btn ghost loc-add" id="loc-add">' + icon("plus") + " Add another store</button>" +
+          '<button class="btn ghost loc-add" id="loc-add">' + icon("plus") + " Add another pharmacy</button>" +
         "</div>" +
         '<aside class="mat-side">' +
           '<div class="mat-side-h">Your contact info</div>' +
@@ -1244,13 +1257,13 @@
       });
       var multi = $$(".loc-store", stores).length > 1;
       stores.classList.toggle("has-multi", multi);
-      var c = $("#loc-count"); if (c) c.textContent = multi ? " · " + $$(".loc-store", stores).length + " stores" : "";
+      var c = $("#loc-count"); if (c) c.textContent = multi ? " · " + $$(".loc-store", stores).length + " pharmacies" : "";
     }
     function bindRemove(ctx) {
       $$("[data-remove]", ctx).forEach(function (b) {
         if (b.__bound) return; b.__bound = true;
         b.addEventListener("click", function () {
-          if ($$(".loc-store", stores).length <= 1) { toast("At least one store is required"); return; }
+          if ($$(".loc-store", stores).length <= 1) { toast("At least one pharmacy is required"); return; }
           b.closest(".loc-store").remove();
           renumber();
         });
@@ -1277,22 +1290,22 @@
       var name = g("name"), address = g("address"), phone = g("phone"), website = g("website");
       if (name || address || phone || website) valid++;
       blocks.push(
-        "Store " + (i + 1) + ":" +
-        "\n  Store Name: " + name +
+        "Pharmacy " + (i + 1) + ":" +
+        "\n  Pharmacy Name: " + name +
         "\n  Address: " + address +
         "\n  Phone: " + phone +
         "\n  Website: " + website
       );
     });
-    if (!valid) { toast("Add at least one store's details first"); return; }
+    if (!valid) { toast("Add at least one pharmacy's details first"); return; }
     var v = function (id) { var el = $(id); return el ? el.value.trim() : ""; };
-    var body = "Pharmacy / Partner Info Request" +
+    var body = "Pharmacy Locator Request — please add the following pharmacy location(s) to the locator on grencomedical.com." +
       "\n\nSubmitted by: " + v("#loc-contact-name") +
       "\nContact Email: " + v("#loc-contact-email") +
       "\nContact Phone: " + v("#loc-contact-phone") +
       "\n\n" + blocks.join("\n\n");
     window.location.href = "mailto:" + CFG.locatorEmail + "?subject=" +
-      encodeURIComponent("Pharmacy / Partner Info Request") + "&body=" + encodeURIComponent(body);
+      encodeURIComponent("Pharmacy Locator Request") + "&body=" + encodeURIComponent(body);
   }
   function emptyState() {
     return '<p style="grid-column:1/-1;color:var(--stone);font-size:14px;padding:30px 0;">No assets match your filters. <a href="mailto:' + CFG.requestEmail + '" style="text-decoration:underline;">Request one →</a></p>';
@@ -1426,9 +1439,10 @@
         packagingHTML(p) +
         skuHTML(p) +
         videoHubHTML(p) +
+        inStoreHTML(p) +
         trainingEntryHTML(p) +
-        // Pharmacy Marketing Materials sits last — a footer to the page content.
-        inStoreHTML(p);
+        // Pharmacy Locator sign-up sits last — a footer CTA to the page content.
+        locatorEntryHTML();
 
       renderGallery(p, active, selected, toggle, syncSelection);
       $$("[data-play]", d).forEach(function (el) {
@@ -1507,15 +1521,11 @@
   function inStoreHTML(p) {
     if (p.isLogo) return "";
     var r = inStoreItems(p), items = r.items;
+    // Launch-ready: the section only appears once real materials are tagged/synced
+    // (no "coming soon" placeholder). Adding items makes it reappear automatically.
+    if (!items.length) return "";
     var head = '<div class="section-head"><h2>Pharmacy Marketing Materials</h2>' +
-      (items.length ? '<span class="badge">' + items.length + " item" + (items.length === 1 ? "" : "s") + "</span>" : "") + "</div>";
-    if (!items.length) {
-      return head + '<div class="instore-empty">' +
-        "<p>Pharmacy marketing materials (brochures, one-sheets, and counter pieces) for this product will appear here as they’re added.</p>" +
-        '<a class="btn ghost sm" href="mailto:' + CFG.orderEmail + "?subject=" +
-          encodeURIComponent("In-store material request — " + p.name) + '">' + icon("mail") + " Request materials</a>" +
-      "</div>";
-    }
+      '<span class="badge">' + items.length + " item" + (items.length === 1 ? "" : "s") + "</span></div>";
     var prodName = p.name.indexOf(BRANDS[p.brand].name) === 0 ? p.name : BRANDS[p.brand].name + " " + p.name;
     var note = '<p class="pkg-note">' + prodName + " specific in-store materials.</p>";
     var tiles = items.map(function (x) {
@@ -1572,10 +1582,11 @@
     if (p.isLogo) return "";
     var info = p.info || {};
     var tbd = false;
+    // Launch-ready: only render finalised rows. Unconfirmed values are hidden
+    // until real data is added (just fill the value in assets.js and it appears).
     function row(label, val) {
-      if (/to be confirmed/i.test(val || "")) tbd = true;
-      var v = val ? '<span class="sku-v' + (/to be confirmed/i.test(val) ? " sku-tbd" : "") + '">' + val + "</span>" : '<span class="sku-v sku-tbd">—</span>';
-      return '<div class="sku-row"><span class="sku-l">' + label + "</span>" + v + "</div>";
+      if (!val || /to be confirmed/i.test(val)) return "";
+      return '<div class="sku-row"><span class="sku-l">' + label + '</span><span class="sku-v">' + val + "</span></div>";
     }
     // Ordered spec/regulatory table (data-driven via info.specs).
     var rows;
