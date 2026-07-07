@@ -373,7 +373,7 @@ button.mat-thumb { padding: 0; }
 @media (max-width: 720px) { .box-grid { grid-template-columns: 1fr; } .box-media { border-left: none; border-top: 1px solid var(--hair); } }
 
 /* product hub: packaging */
-.pkg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 12px; }
+.pkg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 12px; }
 .pkg-card { border: 1px solid var(--hair); border-radius: var(--radius); overflow: hidden; background: var(--paper); }
 .pkg-media { aspect-ratio: 4/3; background: var(--mist); display: flex; align-items: center; justify-content: center; }
 button.pkg-media { width: 100%; border: 0; padding: 0; font: inherit; }
@@ -403,7 +403,9 @@ button.pkg-media { width: 100%; border: 0; padding: 0; font: inherit; }
 .sku-tbd { color: var(--stone); font-weight: 400; opacity: 0.55; }
 
 /* product hub: video education hub */
-.vhub { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-bottom: 10px; }
+/* auto-fit + a min that lets 3 videos share one row on tablet, and collapses
+   empty tracks so they stretch full-width on desktop (no leftover gap). */
+.vhub { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 10px; }
 .vcard { text-align: left; border: 1px solid var(--hair); border-radius: var(--radius); overflow: hidden; background: var(--paper); padding: 0; transition: border-color 0.14s, box-shadow 0.14s, transform 0.14s; }
 .vcard:hover { border-color: var(--ink); box-shadow: var(--shadow); transform: translateY(-2px); }
 .vthumb { position: relative; aspect-ratio: 16/9; background: var(--ink); overflow: hidden; }
@@ -950,9 +952,10 @@ a.logo-tile { cursor: pointer; }
    SINGLE-PRODUCT PORTAL — the Elite II landing is the home page.
    ========================================================================== */
 
-/* Give the product showcase a touch more presence on the landing. */
+/* Give the product showcase a touch more presence on the landing. The product
+   landing renders no back button (home mode); sub-pages (locator, training) keep
+   theirs, so we must NOT hide .back globally here. */
 .single-product .detail-hero { margin-bottom: 30px; }
-.single-product .back { display: none; }
 
 /* --- Browse-by-category cards: compact one-row folder navigation ------------- */
 .catgrid {
