@@ -1453,6 +1453,10 @@
           openVideoModal(el.getAttribute("data-play"), el.getAttribute("data-title"), el.getAttribute("data-dl"), el.getAttribute("data-dlname"));
         });
       });
+      // Large Dropbox videos → open Dropbox's own player in a new tab.
+      $$("[data-watch]", d).forEach(function (el) {
+        el.addEventListener("click", function () { window.open(el.getAttribute("data-watch"), "_blank", "noopener"); });
+      });
       $$("[data-vdl]", d).forEach(function (b) {
         b.addEventListener("click", function (e) { e.stopPropagation(); directDownload(b.getAttribute("data-vdl"), b.getAttribute("data-vname")); });
       });
@@ -1664,13 +1668,19 @@
       var safe = v.title.replace(/"/g, "");
       var poster = v.thumb ? '<img src="' + v.thumb + '" alt="' + safe + '" loading="lazy"/>' : "";
       var dlname = safe.replace(/[^\w.-]+/g, "_") + ".mp4";
-      // Play source: a real Dropbox MP4 takes priority; else the Vimeo/YouTube embed.
-      var playSrc = v.mp4 ? dropboxRaw(v.mp4) : (v.embed || v.url || "");
       var dl = v.mp4 ? dropboxZipUrl(v.mp4) : "";
+      // Large Dropbox MP4s don't stream smoothly inline, so they open in Dropbox's
+      // own (optimised) player in a new tab. Vimeo/YouTube embeds still play inline.
+      var watch = v.mp4 || "";
+      var embed = !v.mp4 ? (v.embed || v.url || "") : "";
+      var playable = !!(watch || embed);
+      var trigger = watch
+        ? ' data-watch="' + watch + '"'
+        : (embed ? ' data-play="' + embed + '" data-title="' + safe + '"' + (dl ? ' data-dl="' + dl + '" data-dlname="' + dlname + '"' : "") : "");
 
-      var thumb = '<div class="vthumb' + (playSrc ? " vplay" : "") + '"' +
-        (playSrc ? ' data-play="' + playSrc + '" data-title="' + safe + '"' + (dl ? ' data-dl="' + dl + '" data-dlname="' + dlname + '"' : "") + ' role="button" tabindex="0" aria-label="Watch ' + safe + '"' : "") + ">" +
-        poster + '<span class="play-badge">' + icon("play") + "</span>" + (playSrc ? '<span class="vthumb-hint">Click to watch</span>' : "") + "</div>";
+      var thumb = '<div class="vthumb' + (playable ? " vplay" : "") + '"' +
+        (playable ? trigger + ' role="button" tabindex="0" aria-label="Watch ' + safe + '"' : "") + ">" +
+        poster + '<span class="play-badge">' + icon("play") + "</span>" + (playable ? '<span class="vthumb-hint">Click to watch</span>' : "") + "</div>";
 
       var dlBtn = v.mp4
         ? '<button class="vbtn" data-vdl="' + dl + '" data-vname="' + dlname + '">' + icon("download") + " Download</button>"
