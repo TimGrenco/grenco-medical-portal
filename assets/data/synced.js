@@ -43,150 +43,150 @@ window.PORTAL_SYNCED = {
           "file": "assets/synced/elite-ii/files/408efb488c99f66bf7c4a54a2cf5ffeeaf3ba00f400669024a3557a5de060b93.png"
         }
       ],
-      "Lifestyle Photos": [
+      "Marketing Photos": [
         {
           "name": "_ALF0161",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/7c8f3e05ba42f1f85a76f83bc4461b551da908e97b4ef7baaf883521aafcd497.jpg",
+          "file": "assets/synced/elite-ii/files/7c8f3e05ba42f1f85a76f83bc4461b551da908e97b4ef7baaf883521aafcd497.jpg"
         },
         {
           "name": "_ALF0253",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/278b88cebc84a853981c5a67587e1ca25d508cf6ad858901bbb31a64ef88c3fb.jpg",
+          "file": "assets/synced/elite-ii/files/278b88cebc84a853981c5a67587e1ca25d508cf6ad858901bbb31a64ef88c3fb.jpg"
         },
         {
           "name": "_ALF0280",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/428f05c24fe8bf9dfb321d223c76a3975b52657fa1b12213e5c250b1ad12ad0c.jpg",
+          "file": "assets/synced/elite-ii/files/428f05c24fe8bf9dfb321d223c76a3975b52657fa1b12213e5c250b1ad12ad0c.jpg"
         },
         {
           "name": "_ALF0311",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/23e4a6fa15d0f14379b6c9c82c24aa0f650ed2ca341ea374a5944a82bb01f6fc.jpg",
+          "file": "assets/synced/elite-ii/files/23e4a6fa15d0f14379b6c9c82c24aa0f650ed2ca341ea374a5944a82bb01f6fc.jpg"
         },
         {
           "name": "_ALF0399",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/7a548f365c3248308f7da973942bb6a0ab62a2320a4fe6d98e728256a4010350.jpg",
+          "file": "assets/synced/elite-ii/files/7a548f365c3248308f7da973942bb6a0ab62a2320a4fe6d98e728256a4010350.jpg"
         },
         {
           "name": "_ALF0736",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/c96e64180e852ec276bba8cd2d8c2dff409d1eb8b4589e44584d437a18811710.jpg",
+          "file": "assets/synced/elite-ii/files/c96e64180e852ec276bba8cd2d8c2dff409d1eb8b4589e44584d437a18811710.jpg"
         },
         {
           "name": "_ALF0742",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/10a8bdcdc5635f58708d1df15d395385882860e7b462e55e168d4c425f89a59a.jpg",
+          "file": "assets/synced/elite-ii/files/10a8bdcdc5635f58708d1df15d395385882860e7b462e55e168d4c425f89a59a.jpg"
         },
         {
           "name": "_ALF0796",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/3fd69561beb2ba2431e95c25b542a25e6073bd690b66ca25b0c04529ca25f82c.jpg",
+          "file": "assets/synced/elite-ii/files/3fd69561beb2ba2431e95c25b542a25e6073bd690b66ca25b0c04529ca25f82c.jpg"
         },
         {
           "name": "_ALF0832",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/5f4e3136e312a63ac595ea0e29403b790183ef3aa054c148ada3d54e2206ea2f.jpg",
+          "file": "assets/synced/elite-ii/files/5f4e3136e312a63ac595ea0e29403b790183ef3aa054c148ada3d54e2206ea2f.jpg"
         },
         {
           "name": "_ALF0835",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/b3ab2e77c49111ecdbf6eb316d02b5ca4ad171941e201661d2d893e487f79265.jpg",
+          "file": "assets/synced/elite-ii/files/b3ab2e77c49111ecdbf6eb316d02b5ca4ad171941e201661d2d893e487f79265.jpg"
         },
         {
           "name": "_GSH5259",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/581f8c93d05aeee611bdeadd798eb5fb2d15a9a89f79dd407a5e3b49ef2ecf6a.jpg",
+          "file": "assets/synced/elite-ii/files/581f8c93d05aeee611bdeadd798eb5fb2d15a9a89f79dd407a5e3b49ef2ecf6a.jpg"
         },
         {
           "name": "_GSH5303",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/1a9775688ed0aa284e63828974d91dd24a900fe11369984de9ebcbdebf593909.jpg",
+          "file": "assets/synced/elite-ii/files/1a9775688ed0aa284e63828974d91dd24a900fe11369984de9ebcbdebf593909.jpg"
         },
         {
           "name": "_GSH5323",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/ac5b646cc1efd368ae45baef10406daf24c0bd1861e14411f8617bbe1aba1227.jpg",
+          "file": "assets/synced/elite-ii/files/ac5b646cc1efd368ae45baef10406daf24c0bd1861e14411f8617bbe1aba1227.jpg"
         },
         {
           "name": "_GSH5409",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/1e6698a20aa26941353c48ee4385b2d20049830edf7806eaee364b179bf91ebc.jpg",
+          "file": "assets/synced/elite-ii/files/1e6698a20aa26941353c48ee4385b2d20049830edf7806eaee364b179bf91ebc.jpg"
         },
         {
           "name": "_GSH5478",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/8b7c0009de3f4df17231754b4586a1493566de2fce144fcdf7cc81d4ab585c80.jpg",
+          "file": "assets/synced/elite-ii/files/8b7c0009de3f4df17231754b4586a1493566de2fce144fcdf7cc81d4ab585c80.jpg"
         },
         {
           "name": "_GSH5556e",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/9ba8133f096c260ba3fe491c76f1922991be4012248a54f870917c7eec3a4ece.jpg",
+          "file": "assets/synced/elite-ii/files/9ba8133f096c260ba3fe491c76f1922991be4012248a54f870917c7eec3a4ece.jpg"
         },
         {
           "name": "_GSH5640",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/96fd2fe500be18eb716a95eea65240048ff1a54134d92bfac8aa9fa2a90ac324.jpg",
+          "file": "assets/synced/elite-ii/files/96fd2fe500be18eb716a95eea65240048ff1a54134d92bfac8aa9fa2a90ac324.jpg"
         },
         {
           "name": "_GSH5695",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/76bf269efbdf966d4c9db2efa31e55b66deea6ef11b67e5f796f308e988af443.jpg",
+          "file": "assets/synced/elite-ii/files/76bf269efbdf966d4c9db2efa31e55b66deea6ef11b67e5f796f308e988af443.jpg"
         },
         {
           "name": "Grenco Medical - Elite II - 1",
@@ -273,24 +273,24 @@ window.PORTAL_SYNCED = {
           "type": "image",
           "format": "PNG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/b44269d9095a05c023b8dcbc6545eb6f20ce60f220ea23f7c10edad40d27e313.jpg",
+          "file": "assets/synced/elite-ii/files/b44269d9095a05c023b8dcbc6545eb6f20ce60f220ea23f7c10edad40d27e313.png"
         },
         {
           "name": "Grenco Medical - Elite II-17",
           "type": "image",
           "format": "PNG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/2f59d2c19491dfcd0dd6b780a777cd5b4b54d9039507295cb22062b3d0c92b9e.jpg",
+          "file": "assets/synced/elite-ii/files/2f59d2c19491dfcd0dd6b780a777cd5b4b54d9039507295cb22062b3d0c92b9e.png"
         },
         {
           "name": "Grenco Medical - Elite II-21",
           "type": "image",
           "format": "PNG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": null,
-          "file": null
+          "thumb": "assets/synced/elite-ii/4bc96ac61c3f421b9cd06365c82f6f4224f4dfe7c815f3a8d2d4a8621d428b7c.jpg",
+          "file": "assets/synced/elite-ii/files/4bc96ac61c3f421b9cd06365c82f6f4224f4dfe7c815f3a8d2d4a8621d428b7c.png"
         }
       ],
       "Packaging": [
