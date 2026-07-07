@@ -8,6 +8,8 @@
   var CFG = window.PORTAL_CONFIG;
   var BRANDS = window.PORTAL_BRANDS;
   var PRODUCTS = window.PORTAL_PRODUCTS;
+  // Single-product portal: the Elite II is the landing page (not a product grid).
+  var PRIMARY = (PRODUCTS.filter(function (p) { return !p.isLogo; })[0]) || PRODUCTS[0];
 
   // ---- tiny helpers --------------------------------------------------------
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
@@ -54,6 +56,13 @@
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (paths[name] || "") + "</svg>";
   }
   var typeIcon = { image: "photo", video: "video", vector: "vector", pdf: "file" };
+  // Folder → icon for the "Browse by category" cards on the product landing.
+  var FOLDER_ICON = {
+    "Product Photos": "photo", "E-Comm Render Photos": "photo", "Lifestyle Photos": "eye",
+    "Web Banners": "photo", "Logos": "vector", "Social Videos": "video",
+    "TV Screen Videos": "video", "Videos": "video", "Packaging": "tag",
+    "Documents": "file", "Misc": "file", "In-Store Marketing": "tag",
+  };
 
   // Simplified brand glyphs for the social hub (filled marks).
   function socialIcon(net) {
@@ -137,7 +146,8 @@
     if (location.hash !== h) { ignoreHash = true; location.hash = h; }
   }
   function navHome() {
-    renderHome();
+    // The "home" of this one-product portal is the Elite II landing itself.
+    openDetail(PRIMARY, null, true);
     if (location.hash) { ignoreHash = true; location.hash = ""; }
   }
   function route() {
@@ -152,10 +162,10 @@
     if (parts[0] === "train") {
       var tp = PRODUCTS.filter(function (x) { return x.brand === parts[1] && slugify(x.name) === parts.slice(2).join("/"); })[0];
       if (tp && window.PORTAL_TRAINING && window.PORTAL_TRAINING[tp.name]) { openTraining(tp); return; }
-      renderHome(); return;
+      navHome(); return;
     }
     var p = productFromHash();
-    if (p) openDetail(p); else renderHome();
+    if (p) openDetail(p, null, p === PRIMARY); else navHome();
   }
 
   // ---- clipboard -----------------------------------------------------------
@@ -1312,11 +1322,15 @@
   }
 
   // ---- rendering: detail ---------------------------------------------------
-  function openDetail(p, initialFolder) {
+  function openDetail(p, initialFolder, isHome) {
+    var home = isHome || p === PRIMARY;
     $("#home").style.display = "none";
     $("#styleguide").style.display = "none";
     var dBrowse = $("#browse"); if (dBrowse) dBrowse.style.display = "none";
-    var dHero = $("#hero"); if (dHero) dHero.style.display = "none";
+    // On the landing we keep the branded hero band above the product; on a
+    // sub-page (training, etc.) it's hidden.
+    var dHero = $("#hero"); if (dHero) dHero.style.display = home ? "" : "none";
+    document.body.classList.toggle("single-product", !!home);
     $("#additional").style.display = "none";
     var d = $("#detail");
     d.style.display = "block";
@@ -1357,11 +1371,15 @@
     }
 
     function render() {
-      // Asset filters: friendly-labelled chips for this product's folders, sat
-      // right at the top of the Documents section for quick filtering.
-      var assetNav = '<div class="asset-nav" id="asset-nav">' + folderNames.map(function (f) {
+      // "Browse by category" cards — the primary way to move between this
+      // product's asset folders (photos, logos, packaging, marketing, docs…).
+      var catCards = '<div class="catgrid" id="asset-nav">' + folderNames.map(function (f) {
         var n = p.folders[f].length, empty = n === 0;
-        return '<button class="anav ' + (f === active ? "on " : "") + (empty ? "is-empty" : "") + '" data-folder="' + f + '"' + (empty ? " disabled" : "") + ">" + typeLabel(f) + '<span class="c">' + n + "</span></button>";
+        return '<button class="catcard' + (f === active ? " on" : "") + (empty ? " is-empty" : "") + '" data-folder="' + f + '"' + (empty ? " disabled" : "") + ">" +
+          '<span class="catcard-ic">' + icon(FOLDER_ICON[f] || "file") + "</span>" +
+          '<span class="catcard-tx"><span class="catcard-name">' + typeLabel(f) + "</span>" +
+          '<span class="catcard-c">' + (empty ? "Coming soon" : n + (n === 1 ? " file" : " files")) + "</span></span>" +
+        "</button>";
       }).join("") + "</div>";
       var activeCount = (p.folders[active] || []).length;
       // Eyebrow shows the product type (falls back to category); the title is the
@@ -1373,7 +1391,7 @@
 
       var stat = p.total + " assets" + (p.videos && p.videos.length ? " · " + p.videos.length + " videos" : "") + " · updated " + fmtDate(p.added);
       d.innerHTML =
-        '<button class="back" id="back-btn">' + icon("arrowLeft") + " Back to library</button>" +
+        (home ? "" : '<button class="back" id="back-btn">' + icon("arrowLeft") + " Back to library</button>") +
         '<div class="detail-hero">' +
           '<div class="detail-cover-lg' + (p.cover ? " clickable" : "") + '"' + (p.cover ? ' id="hero-cover"' : "") + ">" + coverHTML(p) + "</div>" +
           '<div class="detail-info">' +
@@ -1388,16 +1406,15 @@
             overviewFactsHTML(p) +
           "</div>" +
         "</div>" +
-        trainingEntryHTML(p) +
-        highlightsHTML(p) +
-        fullDescHTML(p) +
-        whatsInBoxHTML(p) +
-        // ---- Documents (assets) — sits above Packaging, filters at the top ----
-        '<div class="section-head" id="docs-head"><h2>Digital Assets</h2><span class="badge">' + activeCount + " file" + (activeCount === 1 ? "" : "s") + "</span></div>" +
-        assetNav +
-        '<div class="gallery-toolbar">' +
-          '<label class="selectall"><input type="checkbox" id="sel-all"/> Select all in this folder</label>' +
-          '<button class="btn ghost sm" id="dl-folder">' + icon("download") + " Download folder</button>" +
+        // ---- ASSETS FIRST: this is a download portal, so the folders lead ----
+        '<div class="section-head" id="docs-head"><h2>Download assets by category</h2><span class="badge">' + p.total + " file" + (p.total === 1 ? "" : "s") + "</span></div>" +
+        catCards +
+        '<div class="gallery-sub">' +
+          '<span class="gallery-sub-h">' + typeLabel(active) + '<span class="gallery-sub-c">' + activeCount + " file" + (activeCount === 1 ? "" : "s") + "</span></span>" +
+          '<div class="gallery-toolbar">' +
+            '<label class="selectall"><input type="checkbox" id="sel-all"/> Select all</label>' +
+            '<button class="btn ghost sm" id="dl-folder">' + icon("download") + " Download folder</button>" +
+          "</div>" +
         "</div>" +
         '<div class="gallery" id="gallery"></div>' +
         '<div class="selbar" id="selbar">' +
@@ -1408,8 +1425,12 @@
           "</span>" +
         "</div>" +
         (CFG.usageNote ? '<div class="usage usage-foot">' + icon("info") + "<span>" + CFG.usageNote + "</span></div>" : "") +
-        // ---- product info below the assets ----
+        // ---- product info + supporting material below the assets ----
         inStoreHTML(p) +
+        trainingEntryHTML(p) +
+        highlightsHTML(p) +
+        fullDescHTML(p) +
+        whatsInBoxHTML(p) +
         packagingHTML(p) +
         skuHTML(p) +
         videoHubHTML(p);
@@ -1443,7 +1464,7 @@
       $$("[data-ism]", d).forEach(function (t) {
         t.addEventListener("click", function () { openLightbox(ismItems, +t.getAttribute("data-ism")); });
       });
-      $("#back-btn").addEventListener("click", navHome);
+      var backBtn = $("#back-btn"); if (backBtn) backBtn.addEventListener("click", navHome);
       var trainEntry = $("#train-entry"); if (trainEntry) trainEntry.addEventListener("click", function () { navTraining(p); });
       var heroCover = $("#hero-cover");
       if (heroCover) heroCover.addEventListener("click", function () { openLightbox([{ src: p.cover, name: fullName, url: p.cover }], 0); });
@@ -1464,9 +1485,10 @@
       });
       $("#sel-clear").addEventListener("click", function () { selected = {}; syncSelection(); });
       $("#sel-dl").addEventListener("click", function () { downloadFiles(selectedList(), selectedList().length + " selected"); });
-      $$(".anav", d).forEach(function (t) {
-        // Filters sit directly above the gallery, so switching folders just
-        // updates the gallery in place — no scrolling needed.
+      $$(".catcard", d).forEach(function (t) {
+        // Category cards sit directly above the gallery, so switching folders
+        // just updates the gallery in place — no scrolling needed.
+        if (t.disabled) return;
         t.addEventListener("click", function () { active = t.getAttribute("data-folder"); render(); });
       });
       syncSelection();
@@ -1905,8 +1927,8 @@
     // nav "Logos & assets" link scrolls down to the de-emphasized resources strip.
     var navGuides = $("#nav-guides");
     if (navGuides) navGuides.addEventListener("click", function () {
-      navHome();
-      var r = $("#resources"); if (r) r.scrollIntoView({ behavior: "smooth", block: "start" });
+      openDetail(PRIMARY, "Logos", true);
+      var g = $("#docs-head"); if (g) g.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     var homeLink = $("#home-link");
     if (homeLink) {
