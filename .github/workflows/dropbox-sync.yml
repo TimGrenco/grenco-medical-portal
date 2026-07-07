@@ -1,0 +1,53 @@
+name: Dropbox sync
+
+# Regenerates assets/data/synced.js and assets/synced/ from the Grenco Medical
+# Dropbox folders (see scripts/dropbox-sync.mjs). This is a standalone repo, so
+# every step runs at the repo root.
+
+on:
+  schedule:
+    - cron: "0 7 * * *"   # daily at 07:00 UTC
+  workflow_dispatch: {}    # allow manual runs
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dropbox-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # The sync builds thumbnails: pdftoppm (poppler), ffmpeg (video frames),
+      # convert (ImageMagick) and gs (Ghostscript) for PDF/AI logos.
+      - name: Install thumbnail tooling
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils ffmpeg imagemagick ghostscript
+
+      - name: Run Dropbox sync
+        env:
+          DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+          DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+          DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+        run: node scripts/dropbox-sync.mjs
+
+      - name: Commit updated assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/data/synced.js assets/synced 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No asset changes to commit."
+          else
+            git commit -m "chore: sync Dropbox assets"
+            git push
+          fi

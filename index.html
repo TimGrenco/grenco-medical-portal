@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grenco Medical Brand & Product Assets Portal</title>
+  <meta name="description" content="Official Grenco Medical Elite II product and brand assets for pharmacies, partners, and press — product photography, brand logos, videos, and documents, ready to download." />
+
+  <!-- Social link previews (shown when the portal URL is shared) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Grenco Medical Brand &amp; Product Assets Portal" />
+  <meta property="og:title" content="Grenco Medical Brand &amp; Product Assets Portal" />
+  <meta property="og:description" content="Official Elite II product and brand assets for pharmacies, partners, and press — organized and ready to download." />
+  <meta property="og:url" content="https://grencomedical.com/brand-portal/" />
+  <meta property="og:image" content="https://grencomedical.com/assets/share-card.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Grenco Medical — Brand &amp; Product Assets Portal" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Grenco Medical Brand &amp; Product Assets Portal" />
+  <meta name="twitter:description" content="Official Elite II product and brand assets for pharmacies, partners, and press." />
+  <meta name="twitter:image" content="https://grencomedical.com/assets/share-card.png" />
+
+  <!-- Fonts: Marcellus (display) + DM Sans (body) — matches grencomedical.com -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Favicon + apple-touch-icon (served from the main Grenco Medical site root) -->
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260707m" />
+</head>
+<body>
+  <h1 class="sr-only">Grenco Medical Brand &amp; Product Assets Portal</h1>
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <div class="brandmark" id="home-link" role="button" tabindex="0" aria-label="Back to home">
+        <span class="sq"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></span>
+        <span class="lib">Grenco Medical Assets Portal</span>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-link" id="nav-guides">Logos &amp; assets</button>
+        <a class="req-link req-mail" href="#"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span>Request an asset</span></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO (compact brand band) — home only -->
+  <section class="hero" id="hero">
+    <div class="wrap">
+      <div class="hero-brands">
+        <img class="hero-logo grencomedical" src="assets/logos/grenco-medical-logo-white.svg" alt="Grenco Medical" />
+      </div>
+      <div class="hero-eyebrow">Official Brand &amp; Product Assets</div>
+      <h1 id="hero-tagline">Everything you need, in one place.</h1>
+    </div>
+  </section>
+
+  <!-- BROWSE BAR — primary navigation; sticks under the nav while scrolling -->
+  <section class="browse" id="browse">
+    <div class="wrap browse-inner">
+      <div class="browse-top">
+        <!-- Single brand — the toggle is hidden but kept for the app's state sync. -->
+        <div class="toggle single" id="view-toggle" role="group" aria-label="Brand filter" hidden>
+          <button class="on" data-view="grencomedical">Grenco Medical</button>
+        </div>
+        <div class="browse-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="search" type="text" placeholder="Search products, files, formats…" aria-label="Search all assets" />
+          <button id="search-clear" class="search-clear" type="button" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <span class="browse-count" id="browse-count"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <main class="wrap body">
+    <div id="home">
+      <div class="filterbar" id="active-filters"></div>
+
+      <div class="section-head">
+        <h2 id="all-title">Current products</h2>
+        <span class="badge" id="count-badge">0</span>
+        <div class="viewmode" id="view-mode" role="group" aria-label="Layout">
+          <button class="on" data-layout="grid" title="Grid view" aria-label="Grid view"></button>
+          <button data-layout="list" title="List view" aria-label="List view"></button>
+        </div>
+        <div class="sort" id="sort-toggle" role="group" aria-label="Sort products">
+          <button class="on" data-sort="featured">Featured</button>
+          <button data-sort="az">A–Z</button>
+        </div>
+      </div>
+      <div class="grid" id="all-grid"></div>
+
+      <!-- SEARCH: matching individual files across the portal (shown while searching) -->
+      <div id="search-files"></div>
+
+      <!-- LOGOS & BRAND ASSETS — current brand's logos (in various formats) -->
+      <section id="resources">
+        <div class="section-head"><h2>Logos and Brand Assets</h2></div>
+        <div class="logo-assets" id="logo-assets"></div>
+      </section>
+
+      <!-- IN-STORE MARKETING MATERIALS — retail displays/posters, aggregated across products -->
+      <section id="instore-section">
+        <div class="section-head"><h2>In-Store Marketing Materials</h2></div>
+        <div id="instore"></div>
+      </section>
+
+      <!-- STORE LOCATOR — retailers request to be listed -->
+      <div id="store-locator"></div>
+
+      <!-- FOLLOW ON SOCIALS — official accounts -->
+      <div id="social-hub"></div>
+
+      <!-- ADDITIONAL / LEGACY PRODUCTS — a single box that opens a dedicated page -->
+      <div id="additional-entry"></div>
+    </div>
+
+    <div id="detail" class="detail" style="display:none;"></div>
+    <div id="styleguide" class="detail" style="display:none;"></div>
+    <div id="additional" class="detail" style="display:none;"></div>
+    <div id="materials-page" class="detail" style="display:none;"></div>
+    <div id="locator-page" class="detail" style="display:none;"></div>
+    <div id="training-page" class="detail" style="display:none;"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <span class="l">Pharmacy, partner &amp; press asset requests welcome. Assets update as new materials are added.</span>
+      <nav class="foot-links">
+        <a class="foot-link req-mail" href="#">Request an asset →</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX / ASSET VIEWER -->
+  <div class="lightbox" id="lightbox">
+    <button class="lb-close" id="lb-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <button class="lb-nav lb-prev" id="lb-prev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <button class="lb-nav lb-next" id="lb-next" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+    <div class="lb-stage"><img src="" alt="Asset preview" /></div>
+    <div class="lb-bar">
+      <div class="lb-meta"><span class="lb-name" id="lb-name"></span><span class="lb-count" id="lb-count"></span></div>
+      <div class="lb-acts">
+        <button class="btn ghost sm" id="lb-copy"></button>
+        <button class="btn sm" id="lb-dl"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Floating scroll-to-top (shown after scrolling down) -->
+  <button class="to-top" id="to-top" aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+  </button>
+
+  <script src="assets/data/synced.js?v=20260707m"></script>
+  <script src="assets/data/assets.js?v=20260707m"></script>
+  <script src="assets/js/app.js?v=20260707m"></script>
+</body>
+</html>
