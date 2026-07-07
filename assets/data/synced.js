@@ -3,23 +3,7 @@ window.PORTAL_SYNCED = {
     "folders": {
       "Product Photos": [
         {
-          "name": "AU elite_vape_thumb_01",
-          "type": "image",
-          "format": "JPG",
-          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": "assets/synced/elite-ii/8b33d8e715708a19a99494c1180d13538f1579ddd1ab31dccce03fa9f43a0fce.jpg",
-          "file": "assets/synced/elite-ii/files/8b33d8e715708a19a99494c1180d13538f1579ddd1ab31dccce03fa9f43a0fce.jpg"
-        },
-        {
-          "name": "AU elite_vape_thumb_01",
-          "type": "image",
-          "format": "PNG",
-          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": "assets/synced/elite-ii/1b265bbcd8417ab0e2ccf47d7ba36173fdca07008fad2d9d3d51551b8044de87.jpg",
-          "file": "assets/synced/elite-ii/files/1b265bbcd8417ab0e2ccf47d7ba36173fdca07008fad2d9d3d51551b8044de87.png"
-        },
-        {
-          "name": "AU elite_vape_thumb_02",
+          "name": "Angle",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
@@ -27,7 +11,55 @@ window.PORTAL_SYNCED = {
           "file": "assets/synced/elite-ii/files/409109bcf9597e5264a3cc8ccd794c5d03a712b6938fb3f61d011c54e5f9f96c.jpg"
         },
         {
-          "name": "AU elite_vape_thumb_011",
+          "name": "Angle",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/b9b427b4d5a7733bd774402888d2203b02bb691d05b1107a46f227e72f79fee7.jpg",
+          "file": "assets/synced/elite-ii/files/b9b427b4d5a7733bd774402888d2203b02bb691d05b1107a46f227e72f79fee7.png"
+        },
+        {
+          "name": "Back",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/1e3be054e3937e373940feef090fc94272659befd3628a8d7a7841e6997f13ce.jpg",
+          "file": "assets/synced/elite-ii/files/1e3be054e3937e373940feef090fc94272659befd3628a8d7a7841e6997f13ce.jpg"
+        },
+        {
+          "name": "Back",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/5c323c900d1c9fafc900f0dd79027ddfa9fa0152c78a21c328186361847bc9fb.jpg",
+          "file": "assets/synced/elite-ii/files/5c323c900d1c9fafc900f0dd79027ddfa9fa0152c78a21c328186361847bc9fb.png"
+        },
+        {
+          "name": "Box-Right",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/408efb488c99f66bf7c4a54a2cf5ffeeaf3ba00f400669024a3557a5de060b93.jpg",
+          "file": "assets/synced/elite-ii/files/408efb488c99f66bf7c4a54a2cf5ffeeaf3ba00f400669024a3557a5de060b93.png"
+        },
+        {
+          "name": "Front",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/8b33d8e715708a19a99494c1180d13538f1579ddd1ab31dccce03fa9f43a0fce.jpg",
+          "file": "assets/synced/elite-ii/files/8b33d8e715708a19a99494c1180d13538f1579ddd1ab31dccce03fa9f43a0fce.jpg"
+        },
+        {
+          "name": "Front",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/1b265bbcd8417ab0e2ccf47d7ba36173fdca07008fad2d9d3d51551b8044de87.jpg",
+          "file": "assets/synced/elite-ii/files/1b265bbcd8417ab0e2ccf47d7ba36173fdca07008fad2d9d3d51551b8044de87.png"
+        },
+        {
+          "name": "LighterComparison",
           "type": "image",
           "format": "JPG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
@@ -35,12 +67,108 @@ window.PORTAL_SYNCED = {
           "file": "assets/synced/elite-ii/files/a4b5425de9444b60f62f442d4b2c17ea62274137644865bfb0493f2a7bb35b9d.jpg"
         },
         {
-          "name": "AUS Elite2 Box Right",
+          "name": "LighterComparison",
           "type": "image",
           "format": "PNG",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": "assets/synced/elite-ii/408efb488c99f66bf7c4a54a2cf5ffeeaf3ba00f400669024a3557a5de060b93.jpg",
-          "file": "assets/synced/elite-ii/files/408efb488c99f66bf7c4a54a2cf5ffeeaf3ba00f400669024a3557a5de060b93.png"
+          "thumb": "assets/synced/elite-ii/9f0d843361b3b884fe8c82bf608c82b7c5d5fdb0c647b6989a119aafe320d439.jpg",
+          "file": "assets/synced/elite-ii/files/9f0d843361b3b884fe8c82bf608c82b7c5d5fdb0c647b6989a119aafe320d439.png"
+        },
+        {
+          "name": "Mouthpiece",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/3a0b02b8f72217eadc46b28c9c98f9ee85af7071547add389dc8c8aef6baa0cf.jpg",
+          "file": "assets/synced/elite-ii/files/3a0b02b8f72217eadc46b28c9c98f9ee85af7071547add389dc8c8aef6baa0cf.jpg"
+        },
+        {
+          "name": "Mouthpiece",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/e0c37de827d6875283a81a3f2531b9d6e1f8985a4aa5b117dd3d8c62949169eb.jpg",
+          "file": "assets/synced/elite-ii/files/e0c37de827d6875283a81a3f2531b9d6e1f8985a4aa5b117dd3d8c62949169eb.png"
+        },
+        {
+          "name": "OpenCase",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/68a58ec88a6705c80b0cc1a774d987c15fc9dbef8b0090ce906b7bb3b9da4a49.jpg",
+          "file": "assets/synced/elite-ii/files/68a58ec88a6705c80b0cc1a774d987c15fc9dbef8b0090ce906b7bb3b9da4a49.jpg"
+        },
+        {
+          "name": "OpenCase",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/319a50e576294d5be08afce91e3f782ff1ded79b76cb2cfec27d979a494beebf.jpg",
+          "file": "assets/synced/elite-ii/files/319a50e576294d5be08afce91e3f782ff1ded79b76cb2cfec27d979a494beebf.png"
+        },
+        {
+          "name": "PickTool-Bottom",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/c792eeae6f306d0db8c48947f467c38b325d7bcbcd2bb5d136182522836ad9d2.jpg",
+          "file": "assets/synced/elite-ii/files/c792eeae6f306d0db8c48947f467c38b325d7bcbcd2bb5d136182522836ad9d2.jpg"
+        },
+        {
+          "name": "PickTool-Bottom",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/310e867451ab5448f74eabdbeec742b6192737acafbde6f7f84a284b16c49a4f.jpg",
+          "file": "assets/synced/elite-ii/files/310e867451ab5448f74eabdbeec742b6192737acafbde6f7f84a284b16c49a4f.png"
+        },
+        {
+          "name": "PickTool",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/ef3e77a67998df27216e160b270b3443820b143521dfab7d5310dd4397b67b34.jpg",
+          "file": "assets/synced/elite-ii/files/ef3e77a67998df27216e160b270b3443820b143521dfab7d5310dd4397b67b34.jpg"
+        },
+        {
+          "name": "PickTool",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/5282b4de4e9c2fdcddb15da0e9eb69c546db688247e21dfeeca9a64eab21ad8d.jpg",
+          "file": "assets/synced/elite-ii/files/5282b4de4e9c2fdcddb15da0e9eb69c546db688247e21dfeeca9a64eab21ad8d.png"
+        },
+        {
+          "name": "RightSide",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/26b9a79ac5b682cb36fd837a7d9e4b3c50f12fb855158914e81bf1a894952db4.jpg",
+          "file": "assets/synced/elite-ii/files/26b9a79ac5b682cb36fd837a7d9e4b3c50f12fb855158914e81bf1a894952db4.jpg"
+        },
+        {
+          "name": "RightSide",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/8cb455c54499c1330a6a556be53ea948002381bde944d4b501014d3b01edcaa5.jpg",
+          "file": "assets/synced/elite-ii/files/8cb455c54499c1330a6a556be53ea948002381bde944d4b501014d3b01edcaa5.png"
+        },
+        {
+          "name": "WhatsIncluded",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/cee09ba6c0663343094336b21f5bf64520ba42d0e35ff51fa0923846e0f738e1.jpg",
+          "file": "assets/synced/elite-ii/files/cee09ba6c0663343094336b21f5bf64520ba42d0e35ff51fa0923846e0f738e1.jpg"
+        },
+        {
+          "name": "WhatsIncluded",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/2f17113604344ab842141e388026eae8ac2cdde80b3a7f9f31efb7dd5c048650.jpg",
+          "file": "assets/synced/elite-ii/files/2f17113604344ab842141e388026eae8ac2cdde80b3a7f9f31efb7dd5c048650.png"
         }
       ],
       "Marketing Photos": [
