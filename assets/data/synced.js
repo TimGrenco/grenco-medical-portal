@@ -261,6 +261,22 @@ window.PORTAL_SYNCED = {
           "file": "assets/synced/elite-ii/files/cea599bbc34f37ade42966faf20a5de9a019cb51e45ae5349cfd1fc08ff9202d.png"
         },
         {
+          "name": "Grenco Medical - Elite II - 11",
+          "type": "image",
+          "format": "JPG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/7e4442ad636b774e3b11f20c1cb7507472a1c31f998f96bd723307b1d05a8cce.jpg",
+          "file": "assets/synced/elite-ii/files/7e4442ad636b774e3b11f20c1cb7507472a1c31f998f96bd723307b1d05a8cce.jpg"
+        },
+        {
+          "name": "Grenco Medical - Elite II - 12",
+          "type": "image",
+          "format": "PNG",
+          "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
+          "thumb": "assets/synced/elite-ii/dcc78eb97ed738baac0b6ad5f9454e5cb8f03d868a0b83189a484e6aa5214887.jpg",
+          "file": "assets/synced/elite-ii/files/dcc78eb97ed738baac0b6ad5f9454e5cb8f03d868a0b83189a484e6aa5214887.png"
+        },
+        {
           "name": "Grenco Medical - Elite II - 13",
           "type": "image",
           "format": "PNG",
@@ -473,7 +489,7 @@ window.PORTAL_SYNCED = {
           "type": "video",
           "format": "MP4",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": "assets/synced/elite-ii/0ce57eca4c4a703d3d607276872be08b907111b46d41eb164112f4d785501be1.jpg",
+          "thumb": "assets/synced/elite-ii/0ce57eca4c4a703d3d607276872be08b907111b46d41eb164112f4d785501be1-v2.jpg",
           "file": null
         },
         {
@@ -481,7 +497,7 @@ window.PORTAL_SYNCED = {
           "type": "video",
           "format": "MP4",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": "assets/synced/elite-ii/cdc04971b473fa5eaa2cec0c2be4b27ccb0ea8afae09986fb21892abdae25e47.jpg",
+          "thumb": "assets/synced/elite-ii/cdc04971b473fa5eaa2cec0c2be4b27ccb0ea8afae09986fb21892abdae25e47-v2.jpg",
           "file": null
         },
         {
@@ -489,13 +505,13 @@ window.PORTAL_SYNCED = {
           "type": "video",
           "format": "MP4",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
-          "thumb": "assets/synced/elite-ii/130d7e9f5cef72d374e879f90976a46a51530cf658098a17a6d9fd2d79f301c2.jpg",
+          "thumb": "assets/synced/elite-ii/130d7e9f5cef72d374e879f90976a46a51530cf658098a17a6d9fd2d79f301c2-v2.jpg",
           "file": null
         }
       ],
       "Documents": [
         {
-          "name": "GM_ELITE2_Manual_1.5",
+          "name": "Manual",
           "type": "pdf",
           "format": "PDF",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
@@ -503,7 +519,7 @@ window.PORTAL_SYNCED = {
           "file": "assets/synced/elite-ii/files/be4b167701cdc474107ca5c8f8a05189f8d40a08da036ee60117dc4ae5601a9e.pdf"
         },
         {
-          "name": "TipsAndSimpleSteps_5x7",
+          "name": "QuickStartGuide",
           "type": "pdf",
           "format": "PDF",
           "url": "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
