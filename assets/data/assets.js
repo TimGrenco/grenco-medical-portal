@@ -138,9 +138,12 @@ window.PORTAL_PRODUCTS = [
    how-to-use: 1105899275 · how-to-clean: 1105929806
    ========================================================================== */
 var PRODUCT_VIDEOS = {
+  // The three how-to videos from the Dropbox "Videos" folder — playable inline
+  // (streamed from Dropbox) and downloadable. Thumbnails are the synced frames.
   "Grenco Medical Elite II": [
-    { title: "How to Use: Grenco Medical Elite II", vimeo: "1105899275", thumb: "assets/controls-detail.webp" },
-    { title: "How to Clean: Grenco Medical Elite II", vimeo: "1105929806", thumb: "assets/device-examine.webp" },
+    { title: "Tutorial + Cleaning", mp4: "https://www.dropbox.com/scl/fi/h55guyyrg5l4o0gx0swot/Tutorial-Cleaning.mp4?rlkey=9u4v8yi1is696q7dr3xb0qu8z", thumb: "assets/synced/elite-ii/cdc04971b473fa5eaa2cec0c2be4b27ccb0ea8afae09986fb21892abdae25e47-v2.jpg" },
+    { title: "Tutorial", mp4: "https://www.dropbox.com/scl/fi/jtibibmvurgjnfz1a9u7q/Tutorial.mp4?rlkey=11i82maupvjr3afp488yjfqc3", thumb: "assets/synced/elite-ii/130d7e9f5cef72d374e879f90976a46a51530cf658098a17a6d9fd2d79f301c2-v2.jpg" },
+    { title: "How to Clean", mp4: "https://www.dropbox.com/scl/fi/7sa268xzov7t4yxe9cbyg/How-to-Clean.mp4?rlkey=mndhugvmkrj03yrbzds6ugdkj", thumb: "assets/synced/elite-ii/0ce57eca4c4a703d3d607276872be08b907111b46d41eb164112f4d785501be1-v2.jpg" },
   ],
 };
 

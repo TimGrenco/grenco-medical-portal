@@ -1687,14 +1687,17 @@
       "</div>";
     }).join("");
     return '<div class="section-head"><h2>How to use videos</h2><span class="badge">' + p.videos.length + " video" + (p.videos.length > 1 ? "s" : "") + "</span></div>" +
-      '<p class="vhub-note">' + icon("eye") + " Click a video to watch it, download the file, or open it on YouTube to share." +
+      '<p class="vhub-note">' + icon("eye") + " Click a video to watch it, or download the file." +
         (placeholderDl ? " <em>Downloadable files are being added.</em>" : "") + "</p>" +
       '<div class="vhub">' + cards + "</div>";
   }
-  // Dropbox shared-file link → inline-streamable URL (raw=1) for <video>.
+  // Dropbox shared-file link → inline-streamable URL for <video>. Newer scl/fi
+  // links don't stream via raw=1 on www.dropbox.com; the direct content host
+  // (dl.dropboxusercontent.com) serves the bytes as video/mp4 with range support.
   function dropboxRaw(link) {
-    if (/[?&]dl=/.test(link)) return link.replace(/([?&])dl=\d/, "$1raw=1");
-    return link + (link.indexOf("?") === -1 ? "?raw=1" : "&raw=1");
+    var m = /[?&]rlkey=([^&]+)/.exec(link);
+    return link.split("?")[0].replace("www.dropbox.com", "dl.dropboxusercontent.com") +
+      (m ? "?rlkey=" + m[1] : "");
   }
   // Large in-browser video player (modal overlay).
   function openVideoModal(src, title, dlUrl, dlName) {
