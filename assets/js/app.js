@@ -58,10 +58,8 @@
   var typeIcon = { image: "photo", video: "video", vector: "vector", pdf: "file" };
   // Folder → icon for the "Browse by category" cards on the product landing.
   var FOLDER_ICON = {
-    "Product Photos": "photo", "E-Comm Render Photos": "photo", "Lifestyle Photos": "eye",
-    "Web Banners": "photo", "Logos": "vector", "Social Videos": "video",
-    "TV Screen Videos": "video", "Videos": "video", "Packaging": "tag",
-    "Documents": "file", "Misc": "file", "In-Store Marketing": "tag",
+    "Product Photos": "photo", "Lifestyle Photos": "eye", "Packaging": "stack",
+    "Logos": "vector", "Marketing": "tag", "Videos": "video", "Documents": "file",
   };
 
   // Simplified brand glyphs for the social hub (filled marks).
@@ -184,14 +182,10 @@
   }
 
   // ---- shareable filtered views + active filters ---------------------------
-  var TYPE_LABELS = {
-    "E-Comm Render Photos": "Product photos", "Lifestyle Photos": "Lifestyle Photos",
-    "Logos": "Logos", "Social Videos": "Social Videos", "TV Screen Videos": "TV Screen Videos",
-    "Misc": "Documents",
-  };
+  var TYPE_LABELS = {};   // the canonical folder names are already display-ready
   function typeLabel(t) { return TYPE_LABELS[t] || t; }
-  // Canonical Digital Assets tab order (matches the Dropbox-sync FOLDER_ORDER).
-  var FOLDER_TAB_ORDER = ["Product Photos", "E-Comm Render Photos", "Lifestyle Photos", "Web Banners", "Logos", "Social Videos", "TV Screen Videos", "Packaging", "Documents", "Misc"];
+  // Canonical category order (matches the Dropbox-sync FOLDER_ORDER — 7 folders).
+  var FOLDER_TAB_ORDER = ["Product Photos", "Lifestyle Photos", "Packaging", "Logos", "Marketing", "Videos", "Documents"];
   function folderRank(f) { var i = FOLDER_TAB_ORDER.indexOf(f); return i < 0 ? 99 : i; }
 
   function buildQuery() {

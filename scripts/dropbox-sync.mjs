@@ -29,51 +29,32 @@ if (!APP_KEY || !APP_SECRET || !REFRESH) {
 }
 
 // Products to sync: portal product name → its public Dropbox shared-folder link.
+// One shared folder holds the seven canonical asset categories (below).
 const PRODUCTS = [
   {
     // `commitFiles` = commit the real originals so the browser can download/zip
     // them in-portal (the Elite II is the launch showcase). Keeps the published
     // site under GitHub Pages' 1 GB ceiling since it's a single product.
+    // Videos are thumbnail-only (downloaded via the Dropbox "Download all" link).
     name: "Grenco Medical Elite II",
     slug: "elite-ii",
     commitFiles: true,
-    link: "https://www.dropbox.com/scl/fo/v5u1509ah3sz9xpdlm9cd/AAaK-IJ15ZUxhMAOc1IJNII?rlkey=c5ttsc7k6bm422ijeoivtoww8&st=mscgtyfe&dl=0",
-  },
-  {
-    // How-to videos (how to use, how to clean). Thumbnail-only (videos download
-    // via the Dropbox "Download all" link). Merged into the Elite II hub.
-    name: "Grenco Medical Elite II — Videos",
-    slug: "elite-ii-videos",
-    link: "https://www.dropbox.com/scl/fo/di2t85ii54no5y7k44boq/AAne-wee0vMd0O9VjTvzvJw?rlkey=yg2kmsews51iwlvhithvwwm80&st=4doitzze&dl=0",
-  },
-  {
-    // Grenco Medical brand logos (black/white/various). Powers the homepage
-    // "Logos and Brand Assets" section. `flat` = folder name to bucket files
-    // under if the Dropbox folder has no subfolders.
-    name: "Grenco Medical Logos",
-    slug: "grencomedical-logos",
-    link: "https://www.dropbox.com/scl/fo/1b3dpu0vmsghoq15jk6l5/ABrySGGetMpsKzV92qC9yPA?rlkey=m3pyxngh911cyiigxtk2htb5k&st=md9hanci&dl=0",
-    flat: "Logos",
-    pngThumbs: true,
+    link: "https://www.dropbox.com/scl/fo/ouziaxb0vsn79y7241s2m/AMNTGl9fBkmCrqOiCbOeRiw?rlkey=lex8silmu0kv5ghw02f11v9ru&st=x5pppd3m&dl=0",
   },
 ];
 
-const FOLDER_ORDER = ["Product Photos", "Lifestyle Photos", "Web Banners", "Logos", "Social Videos", "TV Screen Videos", "Packaging", "In-Store Marketing", "Documents"];
-// Normalize inconsistent Dropbox folder names to the canonical tab names above,
-// so a folder called "TV Screen" or "Video" still lands in the right section.
+// The seven canonical categories, in the order they appear on the portal.
+const FOLDER_ORDER = ["Product Photos", "Lifestyle Photos", "Packaging", "Logos", "Marketing", "Videos", "Documents"];
+// Normalize common Dropbox folder-name variants to the canonical names above, so
+// a folder called "Lifestyle" or "Social Videos" still lands in the right bucket.
 const FOLDER_ALIAS = {
-  "TV Screen": "TV Screen Videos", "TV Screens": "TV Screen Videos", "TV Videos": "TV Screen Videos",
-  "Video": "Social Videos", "Videos": "Social Videos", "Social Video": "Social Videos",
+  "Product Photo": "Product Photos", "Product Images": "Product Photos", "E-Comm": "Product Photos", "E-Comm Render Photos": "Product Photos",
   "Lifestyle": "Lifestyle Photos", "Lifestyle Photo": "Lifestyle Photos",
-  "Product Photo": "Product Photos", "Product Images": "Product Photos", "E-Comm": "Product Photos",
-  "Misc": "Documents", "Docs": "Documents", "Logo": "Logos",
-  "In Store Marketing": "In-Store Marketing", "Instore Marketing": "In-Store Marketing",
-  "In-Store Materials": "In-Store Marketing", "In Store Materials": "In-Store Marketing",
-  "POS": "In-Store Marketing", "POS Materials": "In-Store Marketing", "Point of Sale": "In-Store Marketing",
-  "Retail Marketing": "In-Store Marketing", "In Store": "In-Store Marketing",
-  "Web Banner": "Web Banners", "Banners": "Web Banners", "Banner": "Web Banners",
-  "Website Banners": "Web Banners", "Website Banner": "Web Banners",
-  "Web Banner Ads": "Web Banners", "Banner Ads": "Web Banners", "Digital Banners": "Web Banners",
+  "Package": "Packaging",
+  "Logo": "Logos",
+  "Marketing Materials": "Marketing", "In-Store Marketing": "Marketing", "In Store Marketing": "Marketing", "POS": "Marketing", "POS Materials": "Marketing", "Web Banners": "Marketing", "Web Banner": "Marketing", "Banners": "Marketing",
+  "Video": "Videos", "Social Videos": "Videos", "Social Video": "Videos", "TV Screen Videos": "Videos",
+  "Doc": "Documents", "Docs": "Documents", "Misc": "Documents",
 };
 const MAX_COMMIT = 50 * 1024 * 1024;   // commit originals up to 50 MB (bigger files → Dropbox)
 const RASTER = /\.(jpe?g|png|gif|webp|bmp|tiff?)$/i;   // Dropbox can thumbnail these directly

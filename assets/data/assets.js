@@ -82,6 +82,8 @@ window.PORTAL_PRODUCTS = [
     cover: "assets/device-marble.jpg",
     added: "2026-06-09",
     oneSheet: "", // documents coming soon
+    // Seed folders — the seven canonical categories. The Dropbox sync overlays
+    // real files onto these (see synced.js); seeds show until the first sync.
     folders: {
       "Product Photos": [
         mkImg("device-marble.jpg"),
@@ -105,10 +107,9 @@ window.PORTAL_PRODUCTS = [
         mkVec("assets/logos/grenco-medical-logo.svg", "grenco-medical-logo"),
         mkVec("assets/logos/grenco-medical-logo-white.svg", "grenco-medical-logo-white"),
       ],
-      // Coming soon — the two how-to videos are synced from Dropbox.
-      // (The playable how-to hub below uses the site's Vimeo streams in the meantime.)
+      // Populated from Dropbox on sync.
+      "Marketing": [],
       "Videos": [],
-      // Coming soon — informational one-sheet, spec sheet, and Instructions for Use.
       "Documents": [],
     },
   },
