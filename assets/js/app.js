@@ -1548,16 +1548,15 @@
       '<div class="instore-order"><a class="btn" href="#materials">' + icon("mail") + " Order marketing materials</a></div>";
   }
 
-  function pkgCard(label, url) {
-    if (!url) {
+  // pkgCard(label, src, dl): `src` is what to show (a committed thumbnail), `dl`
+  // is where Download/enlarge pulls the full file from (its Dropbox link).
+  function pkgCard(label, src, dl) {
+    if (!src) {
       return '<div class="pkg-card"><div class="pkg-media"><div class="pkg-ph">' + icon("photo") +
         "<span>Image coming soon</span></div></div><div class=\"pkg-label\"><span>" + label + "</span></div></div>";
     }
-    // Dropbox file links → raw for inline display, dl=1 for download.
-    var dbox = /dropbox\.com/.test(url);
-    var src = dbox ? dropboxRaw(url) : url;
-    var dl = dbox ? dropboxZipUrl(url) : url;
-    var name = label.replace(/[^\w.-]+/g, "_") + (/\.png/i.test(url) ? ".png" : /\.jpe?g/i.test(url) ? ".jpg" : "");
+    dl = dl || src;
+    var name = label.replace(/[^\w.-]+/g, "_") + (/\.png/i.test(dl) ? ".png" : /\.jpe?g/i.test(dl) ? ".jpg" : "");
     return '<div class="pkg-card">' +
       '<button class="pkg-media pkg-zoom" data-lbimg="' + src + '" data-lbname="' + label + '" data-lbdl="' + dl + '" title="Click to enlarge">' +
         '<img src="' + src + '" alt="' + label + '" loading="lazy"/></button>' +
@@ -1577,12 +1576,17 @@
       return pkgFolder.filter(function (f) { return (f.name || "").toLowerCase() === t; })[0] ||
              pkgFolder.filter(function (f) { return (f.name || "").toLowerCase().indexOf(t) !== -1; })[0] || null;
     }
-    function imgOf(f) { return f ? (f.file || f.thumb) : null; }
     var cfg = info.packaging || {};
-    var cards = pkgCard("Retail Box Front", imgOf(findPkg(cfg.front)) || info.boxImg);
-    if (cfg.side) cards += pkgCard("Retail Box Side", imgOf(findPkg(cfg.side)));
-    cards += pkgCard("Retail Box Back", imgOf(findPkg(cfg.back)));
-    if (info.cartonImg) cards += pkgCard("Master carton", info.cartonImg);
+    // Show the committed thumbnail; download the full file from its Dropbox link.
+    function card(label, f, fallback) {
+      var src = (f && (f.thumb || f.file)) || fallback || null;
+      var dl = f ? fileDl(f) : (fallback || null);
+      return pkgCard(label, src, dl);
+    }
+    var cards = card("Retail Box Front", findPkg(cfg.front), info.boxImg);
+    if (cfg.side) cards += card("Retail Box Side", findPkg(cfg.side));
+    cards += card("Retail Box Back", findPkg(cfg.back));
+    if (info.cartonImg) cards += pkgCard("Master carton", info.cartonImg, info.cartonImg);
     return '<div class="section-head"><h2>Packaging</h2></div>' +
       '<div class="pkg-grid">' + cards + "</div>";
   }
