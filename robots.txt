@@ -1,2 +1,5 @@
+# Crawlable so link-preview bots (Slack, Twitter/X, LinkedIn, etc.) can fetch
+# the page and share card. The page's `noindex` meta tag keeps the site out of
+# Google/search results — it stays unlisted, just previewable when shared.
 User-agent: *
-Disallow: /
+Allow: /
