@@ -1420,15 +1420,15 @@
         "</div>" +
         (CFG.usageNote ? '<div class="usage usage-foot">' + icon("info") + "<span>" + CFG.usageNote + "</span></div>" : "") +
         // ---- product info + supporting material below the assets ----
-        inStoreHTML(p) +
         highlightsHTML(p) +
         fullDescHTML(p) +
         whatsInBoxHTML(p) +
         packagingHTML(p) +
         skuHTML(p) +
         videoHubHTML(p) +
-        // Training CTA sits last — after the how-to videos.
-        trainingEntryHTML(p);
+        trainingEntryHTML(p) +
+        // Pharmacy Marketing Materials sits last — a footer to the page content.
+        inStoreHTML(p);
 
       renderGallery(p, active, selected, toggle, syncSelection);
       $$("[data-play]", d).forEach(function (el) {

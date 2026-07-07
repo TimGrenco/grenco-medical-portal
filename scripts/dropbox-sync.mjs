@@ -138,12 +138,30 @@ async function downloadFile(tok, link, path, outFile) {
   return true;
 }
 
+// A near-uniform frame (blank white/black intro title card) reads as a "missing"
+// thumbnail. Use ImageMagick to measure contrast so we can reject those.
+function frameOK(f) {
+  try {
+    const sd = execFileSync("identify", ["-format", "%[fx:standard_deviation]", f], { encoding: "utf8" }).trim();
+    return parseFloat(sd) > 0.06;   // >~6% contrast → real content, not a blank card
+  } catch { return true; }          // identify unavailable → accept whatever we got
+}
+
 function videoFrame(src, out) {
-  for (const args of [["-y", "-ss", "1", "-i", src, "-frames:v", "1", "-vf", "scale=640:-1", out],
-                      ["-y", "-i", src, "-frames:v", "1", "-vf", "scale=640:-1", out]]) {
-    try { execFileSync("ffmpeg", args, { stdio: "ignore" }); if (existsSync(out)) return true; } catch { /* try next */ }
+  // The `thumbnail` filter scores a batch of frames and returns the most
+  // representative one, which skips blank intro/outro title cards. Seek a few
+  // seconds in first, and reject any frame that still comes back near-uniform.
+  const attempts = [
+    ["-y", "-ss", "4", "-i", src, "-vf", "thumbnail=n=100,scale=640:-1", "-frames:v", "1", out],
+    ["-y", "-ss", "10", "-i", src, "-vf", "thumbnail=n=100,scale=640:-1", "-frames:v", "1", out],
+    ["-y", "-i", src, "-vf", "thumbnail=n=300,scale=640:-1", "-frames:v", "1", out],
+    ["-y", "-ss", "2", "-i", src, "-frames:v", "1", "-vf", "scale=640:-1", out],
+    ["-y", "-i", src, "-frames:v", "1", "-vf", "scale=640:-1", out],
+  ];
+  for (const args of attempts) {
+    try { execFileSync("ffmpeg", args, { stdio: "ignore" }); if (existsSync(out) && frameOK(out)) return true; } catch { /* try next */ }
   }
-  return false;
+  return existsSync(out);   // keep the last frame even if plain, rather than nothing
 }
 
 function pdfFirstPage(src, outBase) {
@@ -281,7 +299,9 @@ for (const p of PRODUCTS) {
           }
           if (existsSync(join(dir, tn))) { thumb = `assets/synced/${p.slug}/${tn}`; keep.add(tn); }
         } else if (type === "video") {
-          const tn = hash + ".jpg";
+          // `-v2` forces one-time regeneration with the representative-frame
+          // logic; the old blank `hash.jpg` frames get pruned automatically.
+          const tn = hash + "-v2.jpg";
           if (!existsSync(join(dir, tn))) {
             const src = localOrig || (await downloadFile(tok, p.link, path, tmp + "." + e) ? tmp + "." + e : null);
             if (src) { videoFrame(src, join(dir, tn)); if (src === tmp + "." + e) unlinkSync(src); }
