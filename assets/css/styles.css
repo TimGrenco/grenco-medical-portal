@@ -627,7 +627,13 @@ a.logo-tile { cursor: pointer; }
 @media (max-width: 600px) {
   /* horizontal only — a shorthand here would wipe .body's top/bottom padding */
   .wrap { padding-left: 16px; padding-right: 16px; }
-  .hero { padding: 30px 16px 28px; }
+  /* Tighter mobile header: less dead space between the brand band and the
+     product image, and a slimmer image card so it doesn't dominate the fold. */
+  .body { padding-top: 12px; }
+  .detail { padding-top: 8px; }
+  .hero { padding: 24px 16px 22px; }
+  .detail-cover-lg { padding: 16px; }
+  .single-product .detail-hero { margin-bottom: 20px; }
   .req-link span { display: none; }
   /* keep the nav on one tidy line: logo mark only, actions don't wrap */
   .nav-inner { gap: 10px; }
