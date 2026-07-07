@@ -1546,23 +1546,23 @@
   function packagingHTML(p) {
     if (p.isLogo) return "";
     var info = p.info || {};
-    // POP-display image: prefer the central POP Displays library (info.popImg),
-    // else fall back to an image in the product's own "Packaging" Dropbox folder.
-    var popImg = info.popImg;
-    if (!popImg) {
-      var pkgFolder = (p.folders && p.folders["Packaging"]) || [];
-      var pkgImg = pkgFolder.filter(function (f) { return f.thumb; })[0];
-      if (pkgImg) popImg = pkgImg.file || pkgImg.thumb;
+    var pkgFolder = (p.folders && p.folders["Packaging"]) || [];
+    // Resolve a packaging image by its Dropbox file name (exact, then partial), so
+    // the front/back cards keep working after a re-sync changes the file hashes.
+    function findPkg(nm) {
+      if (!nm) return null;
+      var t = nm.toLowerCase();
+      return pkgFolder.filter(function (f) { return (f.name || "").toLowerCase() === t; })[0] ||
+             pkgFolder.filter(function (f) { return (f.name || "").toLowerCase().indexOf(t) !== -1; })[0] || null;
     }
-    var cards = pkgCard("Retail packaging", info.boxImg);
-    if (info.pop || popImg) cards += pkgCard("Retail POP display", popImg);
+    function imgOf(f) { return f ? (f.file || f.thumb) : null; }
+    var cfg = info.packaging || {};
+    var cards = pkgCard("Retail Box Front", imgOf(findPkg(cfg.front)) || info.boxImg);
+    cards += pkgCard("Retail Box Back", imgOf(findPkg(cfg.back)));
     if (info.cartonImg) cards += pkgCard("Master carton", info.cartonImg);
-    var note = info.pop
-      ? "Ships in a retail-ready POP display — see SKU details for inner-pack &amp; master-carton quantities."
-      : "Ships in retail packaging — see SKU details for master-carton quantities.";
-    return '<div class="section-head"><h2>Packaging</h2>' + (info.pop ? '<span class="badge">Ships in POP display</span>' : "") + "</div>" +
+    return '<div class="section-head"><h2>Packaging</h2></div>' +
       '<div class="pkg-grid">' + cards + "</div>" +
-      '<p class="pkg-note">' + note + "</p>";
+      '<p class="pkg-note">Ships in retail packaging — see SKU details for master-carton quantities.</p>';
   }
 
   // SKU details: identifiers + the pack/case breakdown for stores & ops.
