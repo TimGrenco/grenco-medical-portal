@@ -1558,6 +1558,7 @@
     function imgOf(f) { return f ? (f.file || f.thumb) : null; }
     var cfg = info.packaging || {};
     var cards = pkgCard("Retail Box Front", imgOf(findPkg(cfg.front)) || info.boxImg);
+    if (cfg.side) cards += pkgCard("Retail Box Side", imgOf(findPkg(cfg.side)));
     cards += pkgCard("Retail Box Back", imgOf(findPkg(cfg.back)));
     if (info.cartonImg) cards += pkgCard("Master carton", info.cartonImg);
     return '<div class="section-head"><h2>Packaging</h2></div>' +

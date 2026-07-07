@@ -185,7 +185,7 @@ var PRODUCT_INFO = {
     warranty: "2-year manufacturer's warranty",
     // Packaging section: which "Packaging" folder images to show as the retail
     // box front/back (matched by Dropbox file name, so re-syncs stay linked).
-    packaging: { front: "Elite2 Box Right", back: "Elite2 Box and Sleeve Rear Left MedLeaf" },
+    packaging: { front: "Elite2 Box Right", side: "Elite2 Box and Sleeve Side", back: "Elite2 Box and Sleeve Rear Left MedLeaf" },
     manual: "https://grencomedical.com/documents/public/elite-ii-instructions-for-use-v2-3.pdf",
     faqUrl: "https://grencomedical.com/knowledge-base.html",
     productUrl: "https://grencomedical.com/elite-ii.html",
