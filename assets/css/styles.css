@@ -135,7 +135,7 @@ a { color: inherit; text-decoration: none; }
 
 /* --------------------------------- BODY ----------------------------------- */
 /* vertical only — keep .wrap's horizontal gutters (a shorthand here would zero them) */
-.body { padding-top: 28px; padding-bottom: 10px; }
+.body { padding-top: 28px; padding-bottom: 34px; }
 .filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-start; }
 .chip { font-size: 12.5px; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-pill); border: 1px solid var(--hair); background: var(--paper); color: var(--stone); transition: all 0.12s; }
 .chip:hover { border-color: var(--ink); color: var(--ink); }
@@ -608,9 +608,12 @@ a.logo-tile { cursor: pointer; }
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; font-size: 13px; padding: 11px 20px; border-radius: var(--radius-pill); z-index: 110; opacity: 0; pointer-events: none; transition: all 0.24s; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@media (max-width: 740px) {
-  .detail-hero { grid-template-columns: 1fr; gap: 22px; }
-  .detail-cover-lg { max-width: 360px; }
+/* Stack the product hero (image over info) on tablet & down — a 2-col split
+   below this width squeezes the info column too narrow. */
+@media (max-width: 860px) {
+  .detail-hero { grid-template-columns: 1fr; gap: 24px; }
+  /* Full-bleed cover on phones; a centred, capped one on tablets. */
+  .detail-cover-lg { max-width: 460px; margin-inline: auto; width: 100%; }
 }
 @media (max-width: 600px) {
   /* horizontal only — a shorthand here would wipe .body's top/bottom padding */
@@ -989,8 +992,9 @@ a.logo-tile { cursor: pointer; }
 .gallery-sub-c { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--stone); border: 1px solid var(--hair); border-radius: var(--radius-pill); padding: 3px 9px; }
 .gallery-sub .gallery-toolbar { margin: 0; }
 
-/* Mobile: one horizontal-scroll row of chips (bleeds to the screen edge). */
-@media (max-width: 760px) {
+/* Tablet & mobile: one horizontal-scroll row of chips (bleeds to the edge) —
+   cleaner than cramming 7 cards into a narrow row. */
+@media (max-width: 900px) {
   .catgrid {
     flex-wrap: nowrap; overflow-x: auto; gap: 8px;
     scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
