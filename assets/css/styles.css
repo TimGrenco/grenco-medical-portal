@@ -5,39 +5,68 @@
    ========================================================================== */
 
 :root {
-  --ink: #14201F;         /* near-black ink (Grenco ink) */
-  --ink-2: #0F2C2B;       /* deep teal-ink for dark surfaces */
+  /* -----------------------------------------------------------------------
+     Grenco Medical design tokens — pulled from the live site's site.css so
+     the portal reads as the same brand system (deep teal + cream + peach,
+     Marcellus display / DM Sans body). See design/01-design-system.md there.
+
+     NOTE: --ink is the brand DARK / interactive colour. On grencomedical.com
+     every filled chip, button, nav-active state and heading is deep teal
+     (--c-primary-700 #134746), never near-black. Repointing --ink to teal
+     flips the portal's stark black-and-white UI onto the brand in one move.
+     Body copy uses the softer --body ink so the page stays calm. --ink-2 is
+     the darker teal hover. Legacy var names (--serif, --gold) are kept so the
+     existing rules keep working — only their VALUES change.
+     -------------------------------------------------------------------- */
+  --primary-700: #134746;  /* deep teal — brand primary */
+  --primary-600: #1c6160;  /* teal */
+  --primary-300: #7fb3b2;
+  --primary-100: #cee8d8;  /* mint */
+  --primary-050: #eef6f2;  /* faint mint tint (section surface) */
+  --accent-400: #f8af91;   /* peach */
+  --accent-600: #e07a52;   /* deep coral */
+
+  --ink: #134746;          /* brand dark / interactive == deep teal (was near-black) */
+  --ink-2: #0d3534;        /* darker teal — hover on filled brand surfaces */
+  --body: #2c3a39;         /* body copy ink (softer than headings) */
   --paper: #FFFFFF;
-  --mist: #F3F6F5;
-  --mist-2: #E7EDEC;
-  --hair: #DBE4E2;
-  --stone: #5E6B69;
+  --mist: #f6f6f6;         /* neutral surface */
+  --mist-2: #eef6f2;       /* mint-tinted surface */
+  --hair: #e7eceb;         /* subtle border (--c-ink-100) */
+  --stone: #5f6f6e;        /* muted ink (--c-ink-500) */
   --stone-2: #8A9694;
-  --teal-deep: #134746;   /* Deep Teal */
-  --teal: #1C6160;        /* Teal */
-  --peach: #F0A17A;       /* Accent Peach */
-  --gold: #F0A17A;        /* accent (peach) — used sparingly (var name kept) */
-  --gold-ink: #134746;    /* deep teal for accent text on light backgrounds */
+  --teal-deep: #134746;    /* Deep Teal */
+  --teal: #1C6160;         /* Teal */
+  --peach: #f8af91;        /* Accent Peach */
+  --gold: #f8af91;         /* accent (peach) — legacy var name kept */
+  --gold-ink: #134746;     /* deep teal for accent text on light backgrounds */
   --radius: 12px;
+  --radius-sm: 6px;
+  --radius-lg: 20px;
   --radius-pill: 999px;
-  --maxw: 1200px;
-  /* Display = Marcellus serif · Body = DM Sans. (--serif kept as the variable
-     name so existing rules become the display face without a sweep.) */
-  --serif: "Marcellus", Georgia, "Times New Roman", serif;
+  --maxw: 1180px;
+  /* Display = Marcellus serif · Body = DM Sans · accent kickers = DM Sans.
+     (--serif kept as the variable name so existing rules become the display
+     face without a sweep.) */
+  --serif: "Marcellus", "Marcellus Sans", Georgia, "Times New Roman", serif;
   --sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --shadow: 0 16px 34px -22px rgba(15, 44, 43, 0.4);
-  --shadow-lg: 0 30px 60px -30px rgba(15, 44, 43, 0.38);
+  --shadow-sm: 0 1px 2px rgba(20, 32, 31, 0.06);
+  --shadow: 0 8px 24px -12px rgba(20, 32, 31, 0.18);
+  --shadow-lg: 0 30px 60px -30px rgba(20, 32, 31, 0.28);
+  --ease: cubic-bezier(.2,.6,.2,1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
   font-family: var(--sans);
-  color: var(--ink);
+  color: var(--body);
   background: var(--paper);
   -webkit-font-smoothing: antialiased;
-  line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.6;
 }
+:focus-visible { outline: 3px solid var(--primary-600); outline-offset: 2px; border-radius: 4px; }
 img { display: block; max-width: 100%; }
 button { font-family: inherit; cursor: pointer; }
 a { color: inherit; text-decoration: none; }
@@ -768,3 +797,138 @@ a.logo-tile { cursor: pointer; }
 .cert-foot strong { color: #fff; }
 .trn-certactions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
 @media (max-width: 600px) { .trn-hero { flex-direction: column; gap: 14px; } .trn-result { gap: 14px; } }
+
+/* =============================================================================
+   GRENCO MEDICAL — brand theme layer
+   Appended so it overrides the base rules by source order (no !important, no
+   hook renames). Turns the stark black-and-white asset UI into the calm,
+   clinical-premium teal + cream + peach system used on grencomedical.com:
+   elegant single-weight Marcellus display, DM Sans body, peach kicker dashes,
+   pill buttons with a hover lift, cards with a peach top-accent + soft shadow.
+   ========================================================================== */
+
+/* --- Display type: true Marcellus (single weight 400, relaxed tracking) ---
+   The base sheet faux-bolds Marcellus (weight 700/800, tight negative
+   letter-spacing) which reads "editorial". The live site sets Marcellus at its
+   natural weight with 0 tracking for an airy, premium serif. Restore that. */
+.hero h1,
+.section-head h2, .section-head h3,
+.detail-info h2, .sg-hero h2, .locator-card h2,
+.ae-title, .logo-card-name, .instore-group-h,
+.loc-store-n, .mat-side-h, .card-name, .row-name,
+.trn-hero-txt h2, .trn-module-h h3, .cert-award, .cert-name,
+.cert-product, .fallback span, .logo-tile span, .sg-logo-tile span,
+.ess-wordmark {
+  font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+/* headings sit in brand teal; body copy stays the softer ink */
+.section-head h2, .section-head h3, .detail-info h2,
+.ae-title, .logo-card-name, .card-name, .row-name,
+.trn-module-h h3, .sg-hero h2 { color: var(--primary-700); }
+
+/* --- Eyebrow / kicker labels: peach dash, letter-spaced caps (site .eyebrow) --- */
+.detail-eyebrow, .ov-h, .logo-card-fmts-l, .section-head .badge {
+  color: var(--primary-600);
+  font-weight: 700;
+}
+/* on the dark teal hero / panels the kicker reads mint (site hero .eyebrow) */
+.hero-eyebrow { color: var(--primary-100); }
+.locator-eyebrow, .trn-eyebrow { color: var(--accent-400); }
+.detail-eyebrow, .ov-h {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+}
+.detail-eyebrow::before, .ov-h::before {
+  content: ""; width: 24px; height: 3px; border-radius: 3px;
+  background: var(--accent-400); flex: none;
+}
+
+/* --- Hero: teal gradient + peach glow + soft "+" micro-pattern (site hero) --- */
+.hero {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 10v10M10 15h10' stroke='%23ffffff' stroke-width='1.2' stroke-linecap='round' opacity='0.08'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, var(--primary-700), var(--primary-600));
+  padding: 54px 24px 50px;
+}
+.hero::after {
+  content: ""; position: absolute; inset: auto -8% -60% auto;
+  width: 460px; height: 460px; left: auto; right: -8%; bottom: -60%;
+  background: radial-gradient(circle, var(--accent-400) 0, transparent 62%);
+  opacity: 0.30; pointer-events: none;
+}
+.hero::before {
+  background: linear-gradient(90deg, transparent, var(--accent-400), transparent);
+  opacity: 0.75;
+}
+.hero h1 { font-weight: 500; letter-spacing: 0; line-height: 1.08; }
+
+/* --- Buttons: pill, teal-primary, peach-forward hover lift (site .btn) --- */
+.btn {
+  font-weight: 600; padding: 0.72rem 1.4rem;
+  border: 2px solid transparent; background: var(--primary-600);
+  border-color: var(--primary-600); color: #fff;
+  transition: background .2s var(--ease), color .2s var(--ease),
+              border-color .2s var(--ease), transform .2s var(--ease),
+              box-shadow .2s var(--ease);
+}
+.btn:hover { background: var(--primary-700); border-color: var(--primary-700); }
+.btn.ghost {
+  background: var(--paper); color: var(--primary-700);
+  border-color: var(--primary-600);
+}
+.btn.ghost:hover { background: var(--primary-600); color: #fff; border-color: var(--primary-600); }
+@media (prefers-reduced-motion: no-preference) {
+  .btn:hover { transform: translateY(-1px); }
+}
+
+/* --- Cards: white, subtle border, soft shadow, peach top-accent (site .card) --- */
+.card-frame, .logo-card, .vcard, .pkg-card, .sf-cell, .box-grid, .box-single,
+.trn-module, .trn-q, .mat-side, .hub-brand, .additional-entry-card {
+  box-shadow: var(--shadow-sm);
+}
+.card-frame { border-top: 3px solid var(--accent-400); }
+.card:hover .card-frame,
+.additional-entry-card:hover, .vcard:hover, .sf-cell:hover,
+.instore-tile:hover, .logo-tile:hover, .row:hover, .back:hover,
+.mat-thumb-zoom:hover, .pkg-zoom:hover {
+  border-color: var(--primary-600);
+}
+.card:hover .card-frame, .vcard:hover, .sf-cell:hover,
+.additional-entry-card:hover { box-shadow: var(--shadow); }
+
+/* Product/logo tiles: warm mint-tinted wells rather than flat grey */
+.card-frame, .detail-cover-lg, .logo-tile, .row-thumb, .sf-thumb,
+.mat-thumb, .pkg-media, .gthumb, .instore-tile, .box-media, .ov-facts,
+.usage { background: var(--mist-2); }
+
+/* "New" / featured pills: peach with teal ink (site accent badge) */
+.tag-new, .row-new { background: var(--accent-400); color: var(--primary-700); }
+.card-label { color: var(--primary-700); background: var(--primary-050);
+  border-color: var(--primary-100); }
+
+/* --- Sticky bars & browse: cream tint so the teal hero reads as "header" --- */
+.nav { background: rgba(255, 255, 255, 0.88); }
+.browse { background: var(--primary-050); border-bottom-color: var(--primary-100); }
+.browse-search input:focus {
+  border-color: var(--primary-600);
+  box-shadow: 0 0 0 4px rgba(127, 179, 178, 0.28);
+}
+.nav-link::after, .brandmark .sq { background: var(--primary-700); }
+
+/* Search focus glows → brand mint rather than the old amber */
+.browse-search input:focus { outline: none; }
+
+/* Store-locator / marketing CTA panels keep the deep-teal fill (now on brand) */
+.locator-card, .trn-entry { background: var(--primary-700); }
+.locator-card .btn.lg { background: #fff; color: var(--primary-700); border-color: #fff; }
+.locator-card .btn.lg:hover { background: var(--primary-100); }
+
+/* Section rhythm: a touch more air, matching the site's generous spacing */
+.section-head { margin-bottom: 22px; }
+#resources { border-top-color: var(--hair); }
+
+/* Play badge hover already flips to peach (var --gold) — now on-brand */
+
+/* Single-brand portal: honour the hidden attribute on the brand toggle */
+.toggle[hidden]{display:none !important}
