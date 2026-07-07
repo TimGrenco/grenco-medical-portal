@@ -246,6 +246,7 @@ window.PORTAL_PRODUCTS.forEach(function (p) {
         if (s.folders[f] && s.folders[f].length) p.folders[f] = s.folders[f];
       });
       if (s.dropbox) p.dropbox = s.dropbox;
+      if (s.folderLinks) p.folderLinks = s.folderLinks;   // per-category Dropbox download links
       p.synced = true;
     }
   });
