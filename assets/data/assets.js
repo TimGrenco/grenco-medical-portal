@@ -27,9 +27,8 @@ window.PORTAL_CONFIG = {
   orderEmail: "support@grencomedical.com",   // marketing-material order requests
   locatorEmail: "support@grencomedical.com", // pharmacy/partner listing requests
   newWindowDays: 60,                          // how many days counts as "New"
-  // Shown on each product page. Edit freely (or set to "" to hide).
-  usageNote:
-    "These assets are provided for approved pharmacy, partner, and press use. Please don't alter the logos or product imagery. The Grenco Medical Elite II is a prescription medical device — these materials must not be used to advertise or promote its supply to the public. Please direct patients to speak with their prescriber.",
+  // Usage/compliance note shown on the product page. Empty = hidden.
+  usageNote: "",
 };
 
 /* Brand essentials (colors + fonts) power the "Brand essentials" panel.

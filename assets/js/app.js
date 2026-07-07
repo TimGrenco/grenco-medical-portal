@@ -1573,8 +1573,7 @@
     cards += pkgCard("Retail Box Back", imgOf(findPkg(cfg.back)));
     if (info.cartonImg) cards += pkgCard("Master carton", info.cartonImg);
     return '<div class="section-head"><h2>Packaging</h2></div>' +
-      '<div class="pkg-grid">' + cards + "</div>" +
-      '<p class="pkg-note">Ships in retail packaging — see SKU details for master-carton quantities.</p>';
+      '<div class="pkg-grid">' + cards + "</div>";
   }
 
   // SKU details: identifiers + the pack/case breakdown for stores & ops.
