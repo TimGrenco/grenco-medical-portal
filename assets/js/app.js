@@ -1415,6 +1415,9 @@
         "</div>" +
         // ---- ASSETS FIRST: this is a download portal, so the folders lead ----
         '<div class="section-head" id="docs-head"><h2>Download assets by category</h2><span class="badge">' + p.total + " file" + (p.total === 1 ? "" : "s") + "</span></div>" +
+        // Mobile-only hint: the category tabs scroll horizontally on small screens.
+        '<div class="catgrid-hint" aria-hidden="true"><span>Swipe to see more folders</span>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></div>' +
         catCards +
         '<div class="gallery-sub">' +
           '<span class="gallery-sub-h">' + typeLabel(active) + '<span class="gallery-sub-c">' + activeCount + " file" + (activeCount === 1 ? "" : "s") + "</span></span>" +

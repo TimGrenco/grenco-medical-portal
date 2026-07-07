@@ -992,6 +992,18 @@ a.logo-tile { cursor: pointer; }
 .gallery-sub-c { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--stone); border: 1px solid var(--hair); border-radius: var(--radius-pill); padding: 3px 9px; }
 .gallery-sub .gallery-toolbar { margin: 0; }
 
+/* Mobile swipe affordance for the horizontally-scrolling category tabs. */
+.catgrid-hint { display: none; }
+@media (max-width: 900px) {
+  .catgrid-hint {
+    display: flex; align-items: center; gap: 6px;
+    margin: 0 0 9px; font-size: 12px; font-weight: 600; letter-spacing: .01em;
+    color: var(--stone);
+  }
+  .catgrid-hint svg { width: 15px; height: 15px; stroke: var(--accent-400); animation: catSwipe 1.5s ease-in-out infinite; }
+}
+@keyframes catSwipe { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
 /* Tablet & mobile: one horizontal-scroll row of chips (bleeds to the edge) —
    cleaner than cramming 7 cards into a narrow row. */
 @media (max-width: 900px) {
