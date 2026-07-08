@@ -252,10 +252,15 @@ window.PORTAL_PRODUCTS.forEach(function (p) {
   });
   // Build the "How to use videos" hub from the synced "Videos" folder when its
   // files have playable per-file share links; otherwise keep the Vimeo fallback.
+  // VIDEO_ORDER pins the display order (unlisted names fall to the end).
+  var VIDEO_ORDER = ["Tutorial + Cleaning", "Tutorial", "How to Clean"];
   window.PORTAL_PRODUCTS.forEach(function (p) {
     var vids = (p.folders && p.folders["Videos"]) || [];
     if (vids.some(function (v) { return v.link; })) {
-      p.videos = vids.map(function (v) {
+      p.videos = vids.slice().sort(function (a, b) {
+        var ia = VIDEO_ORDER.indexOf(a.name), ib = VIDEO_ORDER.indexOf(b.name);
+        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+      }).map(function (v) {
         return { title: v.name, thumb: v.thumb || null, mp4: v.link || null };
       });
     }
