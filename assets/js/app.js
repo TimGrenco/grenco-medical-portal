@@ -1961,6 +1961,220 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2200);
   }
 
+  // ---- global command search ------------------------------------------------
+  // A persistent header search with an instant-preview flyout. Because this is a
+  // one-product portal, the job is finding the RIGHT file fast among ~80 assets,
+  // 7 folders and the how-to videos — so results are ranked, highlighted, keyboard
+  // navigable, and jump straight into the folder (opening previewable files in the
+  // lightbox). Self-contained: reuses fileIndex() but not the legacy home browse.
+  var RS_KEY = "portal_recent_search";
+  function loadRecentSearch() { try { return JSON.parse(localStorage.getItem(RS_KEY) || "[]"); } catch (e) { return []; } }
+  function pushRecentSearch(q) {
+    q = (q || "").trim(); if (!q) return;
+    try {
+      var arr = loadRecentSearch().filter(function (x) { return x.toLowerCase() !== q.toLowerCase(); });
+      arr.unshift(q); localStorage.setItem(RS_KEY, JSON.stringify(arr.slice(0, 5)));
+    } catch (e) {}
+  }
+  function wireGlobalSearch() {
+    var input = $("#gsearch"); if (!input) return;
+    var wrap = $("#nav-search"), pop = $("#gs-pop"), clearBtn = $("#gsearch-clear");
+    var product = PRIMARY;
+    var rows = [], activeI = -1, isOpen = false;
+
+    input.placeholder = "Search " + (product.total || "") + " files…";
+
+    function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+    function qterms(q) { return q.toLowerCase().split(/\s+/).filter(Boolean); }
+    function subseq(hay, t) { var i = 0; for (var j = 0; j < hay.length && i < t.length; j++) { if (hay[j] === t[i]) i++; } return i === t.length; }
+    function hl(label, ts) {
+      var safe = escapeHTML(label);
+      if (!ts.length) return safe;
+      try { return safe.replace(new RegExp("(" + ts.map(escRe).join("|") + ")", "ig"), "<mark>$1</mark>"); }
+      catch (e) { return safe; }
+    }
+
+    // Product-scoped file/video index + folder (category) jump targets.
+    var idx = fileIndex().filter(function (r) { return r.product.brand === product.brand; });
+    var cats = Object.keys(product.folders)
+      .filter(function (f) { return f !== "In-Store Marketing"; })
+      .sort(function (a, b) { return folderRank(a) - folderRank(b); })
+      .map(function (f) { return { kind: "cat", folder: f, name: typeLabel(f), count: (product.folders[f] || []).length }; });
+
+    function scoreFile(r, ts, qj) {
+      var name = r.label.toLowerCase(), fmt = (r.file.format || "").toLowerCase(), folder = r.folder.toLowerCase();
+      for (var i = 0; i < ts.length; i++) { if (r.hay.indexOf(ts[i]) === -1) return -1; }
+      var s = 0;
+      if (name === qj) s += 1000; else if (name.indexOf(qj) === 0) s += 320; else if (name.indexOf(qj) > -1) s += 170;
+      ts.forEach(function (t) {
+        var k = name.indexOf(t);
+        if (k === 0) s += 80; else if (k > 0) s += 42;
+        if (fmt === t) s += 150; else if (fmt.indexOf(t) === 0) s += 60;
+        if (folder.indexOf(t) > -1) s += 24;
+      });
+      if (r.video) s += 6;
+      return s;
+    }
+
+    // Returns ordered groups: categories, then files, then videos.
+    function build(q) {
+      var ts = qterms(q), qj = q.toLowerCase().trim();
+      var catHits = cats.filter(function (c) {
+        var n = c.name.toLowerCase(); return ts.every(function (t) { return n.indexOf(t) > -1; });
+      }).map(function (c) {
+        var n = c.name.toLowerCase();
+        return { row: c, sc: n === qj ? 900 : n.indexOf(qj) === 0 ? 300 : 120 };
+      }).sort(function (a, b) { return b.sc - a.sc; });
+
+      var hits = [];
+      idx.forEach(function (r) {
+        var sc = scoreFile(r, ts, qj);
+        if (sc >= 0) hits.push({ r: r, sc: sc });
+      });
+      // typo / loose fallback when a single longer term finds nothing exact
+      if (!hits.length && ts.length === 1 && ts[0].length >= 4) {
+        idx.forEach(function (r) {
+          if (subseq(r.label.toLowerCase(), ts[0]) || subseq(r.hay, ts[0])) hits.push({ r: r, sc: 3 });
+        });
+      }
+      hits.sort(function (a, b) { return b.sc - a.sc || folderRank(a.r.folder) - folderRank(b.r.folder); });
+
+      var files = [], vids = [];
+      hits.forEach(function (h) {
+        var row = { kind: h.r.video ? "video" : "file", r: h.r };
+        (h.r.video ? vids : files).push(row);
+      });
+      return {
+        cats: catHits.map(function (x) { return x.row; }),
+        files: files, vids: vids,
+        total: catHits.length + files.length + vids.length
+      };
+    }
+
+    function rowThumb(it) {
+      if (it.kind === "cat") return '<span class="gs-thumb is-cat">' + icon(FOLDER_ICON[it.folder] || "file") + "</span>";
+      if (it.kind === "recent") return '<span class="gs-thumb">' + icon("search") + "</span>";
+      var f = it.r.file, vid = it.kind === "video";
+      var media = f.thumb ? '<img src="' + f.thumb + '" alt="" loading="lazy"/>' : icon(typeIcon[f.type] || "file");
+      return '<span class="gs-thumb' + (vid ? " is-video" : "") + '">' + media + (vid ? '<span class="gs-play">' + icon("play") + "</span>" : "") + "</span>";
+    }
+    function rowHTML(it, i, ts) {
+      var name, sub, fmt = "";
+      if (it.kind === "cat") { name = escapeHTML(it.name); sub = "Category · " + it.count + (it.count === 1 ? " file" : " files"); }
+      else if (it.kind === "recent") { name = hl(it.q, ts); sub = "Recent search"; }
+      else {
+        name = hl(it.r.label, ts);
+        sub = folderLabel(it.r.folder) + (it.kind === "video" ? " · Video" : "");
+        if (it.r.file.format && it.kind !== "video") fmt = '<span class="gs-fmt">' + escapeHTML(it.r.file.format) + "</span>";
+      }
+      return '<button class="gs-row" role="option" id="gs-row-' + i + '" data-i="' + i + '" tabindex="-1">' +
+        rowThumb(it) +
+        '<span class="gs-tx"><span class="gs-name">' + name + '</span><span class="gs-sub">' + sub + "</span></span>" +
+        fmt + '<span class="gs-enter">↵</span></button>';
+    }
+
+    function paint(groups, footNote, ts) {
+      rows = []; var html = "";
+      groups.forEach(function (g) {
+        if (!g.items.length) return;
+        if (g.label) html += '<div class="gs-group">' + g.label + "</div>";
+        g.items.forEach(function (it) { var i = rows.length; rows.push(it); html += rowHTML(it, i, ts || []); });
+      });
+      html += '<div class="gs-foot"><span>' + footNote + '</span>' +
+        '<span class="gs-foot-keys"><kbd>↑</kbd><kbd>↓</kbd> to move <kbd>↵</kbd> open <kbd>esc</kbd></span></div>';
+      pop.innerHTML = html;
+      $$(".gs-row", pop).forEach(function (b) {
+        b.addEventListener("mousemove", function () { setActive(+b.getAttribute("data-i")); });
+        b.addEventListener("click", function () { choose(rows[+b.getAttribute("data-i")]); });
+      });
+      activeI = rows.length ? 0 : -1; syncActive();
+    }
+
+    function renderEmptyState() {
+      var groups = [];
+      var rec = loadRecentSearch();
+      if (rec.length) groups.push({ label: "Recent", items: rec.map(function (q) { return { kind: "recent", q: q }; }) });
+      groups.push({ label: "Browse by category", items: cats.slice() });
+      paint(groups, product.total + " files · " + cats.length + " categories", []);
+    }
+    function renderQuery(q) {
+      var ts = qterms(q), res = build(q);
+      if (!res.total) {
+        rows = []; activeI = -1;
+        pop.innerHTML = '<div class="gs-empty">' + icon("search") +
+          '<div><strong>No matches for “' + escapeHTML(q) + '”.</strong>' +
+          '<span>Try a file type (SVG, PNG, MP4), a folder (packaging, logos, videos), or ' +
+          '<a href="mailto:' + CFG.requestEmail + "?subject=" + encodeURIComponent("Asset request — " + q) + '">request this asset</a>.</span></div></div>';
+        return;
+      }
+      paint([
+        { label: "Categories", items: res.cats },
+        { label: "Files", items: res.files },
+        { label: "Videos", items: res.vids }
+      ], res.total + (res.total === 1 ? " result" : " results") + " for “" + escapeHTML(q) + "”", ts);
+    }
+
+    function openPop() { pop.hidden = false; isOpen = true; wrap.classList.add("open"); input.setAttribute("aria-expanded", "true"); }
+    function closePop() { pop.hidden = true; isOpen = false; wrap.classList.remove("open"); input.setAttribute("aria-expanded", "false"); input.removeAttribute("aria-activedescendant"); activeI = -1; }
+    function refresh() {
+      var q = input.value.trim();
+      wrap.classList.toggle("has-q", !!input.value);
+      if (q) renderQuery(q); else renderEmptyState();
+      openPop();
+    }
+    function setActive(i) { activeI = i; syncActive(); }
+    function syncActive() {
+      $$(".gs-row", pop).forEach(function (b, i) { b.classList.toggle("active", i === activeI); });
+      var el = activeI >= 0 ? $("#gs-row-" + activeI, pop) : null;
+      if (el) { input.setAttribute("aria-activedescendant", el.id); el.scrollIntoView({ block: "nearest" }); }
+      else input.removeAttribute("aria-activedescendant");
+    }
+
+    // ---- selection -> jump to the asset --------------------------------------
+    function scrollToDocs() { var h = $("#docs-head"); if (h) h.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    function openCat(folder) { openDetail(product, folder, true); setTimeout(scrollToDocs, 40); }
+    function openFile(r) {
+      openDetail(product, r.folder, true);
+      var key = fileKey(r.folder, r.file);
+      var cell = $$(".gcell", $("#gallery")).filter(function (c) { return c.getAttribute("data-key") === key; })[0];
+      if (!cell) { scrollToDocs(); return; }
+      cell.scrollIntoView({ behavior: "smooth", block: "center" });
+      cell.classList.add("gs-flash");
+      setTimeout(function () { cell.classList.remove("gs-flash"); }, 1700);
+      var th = $(".gthumb[data-lbidx]", cell);   // previewable → pop straight into the lightbox
+      if (th) setTimeout(function () { th.click(); }, 90);
+    }
+    function openVideo(r) {
+      openDetail(product, null, true);
+      var card = $$(".vcard").filter(function (c) { var t = $(".vtitle", c); return t && t.textContent.trim() === r.file.name; })[0];
+      if (!card) return;
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      var play = $(".vthumb.vplay", card) || $("[data-play]", card) || $("[data-watch]", card);
+      if (play) setTimeout(function () { play.click(); }, 320);
+    }
+    function choose(it) {
+      if (!it) return;
+      if (it.kind === "recent") { input.value = it.q; refresh(); return; }
+      pushRecentSearch(input.value);
+      input.blur(); closePop();
+      if (it.kind === "cat") openCat(it.folder);
+      else if (it.kind === "video") openVideo(it.r);
+      else openFile(it.r);
+    }
+
+    // ---- events --------------------------------------------------------------
+    input.addEventListener("input", refresh);
+    input.addEventListener("focus", function () { if (!isOpen) refresh(); });
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown") { e.preventDefault(); if (!isOpen) { refresh(); return; } if (rows.length) setActive(Math.min(activeI + 1, rows.length - 1)); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); if (rows.length) setActive(Math.max(activeI - 1, 0)); }
+      else if (e.key === "Enter") { if (isOpen && rows.length) { e.preventDefault(); choose(rows[activeI >= 0 ? activeI : 0]); } }
+      else if (e.key === "Escape") { if (input.value) { input.value = ""; wrap.classList.remove("has-q"); refresh(); } else { closePop(); input.blur(); } }
+    });
+    clearBtn.addEventListener("click", function () { input.value = ""; wrap.classList.remove("has-q"); input.focus(); refresh(); });
+    document.addEventListener("mousedown", function (e) { if (isOpen && !wrap.contains(e.target)) closePop(); });
+  }
+
   // ---- wire up the static shell -------------------------------------------
   function init() {
     // hero text from config
@@ -1979,6 +2193,9 @@
       homeLink.addEventListener("click", navHome);
       homeLink.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navHome(); } });
     }
+
+    // persistent header search + instant-preview flyout
+    wireGlobalSearch();
 
     // brand toggle
     $$("#view-toggle button").forEach(function (b) {
@@ -2056,7 +2273,6 @@
       if (e.key === "Escape") {
         if ($("#vlb")) { closeVideoModal(); return; }
         if (lbOpen()) { closeLightbox(); return; }
-        if (typing && el.id === "search") { el.value = ""; state.query = ""; var ce = $("#search-clear"); if (ce) ce.classList.remove("show"); el.blur(); renderHome(true); }
         return;
       }
       if (lbOpen()) {
@@ -2064,7 +2280,7 @@
         else if (e.key === "ArrowRight") lbStep(1);
         return;
       }
-      if (e.key === "/" && !typing) { e.preventDefault(); var s = $("#search"); if (s) s.focus(); }
+      if (e.key === "/" && !typing) { e.preventDefault(); var s = $("#gsearch") || $("#search"); if (s) s.focus(); }
     });
 
     // floating scroll-to-top — shows once you're a screen or two down
