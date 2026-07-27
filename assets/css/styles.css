@@ -34,7 +34,10 @@
   --mist-2: #eef6f2;       /* mint-tinted surface */
   --hair: #e7eceb;         /* subtle border (--c-ink-100) */
   --stone: #5f6f6e;        /* muted ink (--c-ink-500) */
-  --stone-2: #8A9694;
+  /* Darkened from #8A9694 (3.06:1 — failed WCAG AA everywhere it was used for
+     text: format pills, group headers, footer, placeholder). Now 5.3:1 on
+     white and 4.7:1 on the mint row. */
+  --stone-2: #626e6d;
   --teal-deep: #134746;    /* Deep Teal */
   --teal: #1C6160;         /* Teal */
   --peach: #f8af91;        /* Accent Peach */
@@ -75,7 +78,9 @@ a { color: inherit; text-decoration: none; }
 
 /* ----------------------------------- NAV ---------------------------------- */
 .nav {
-  position: sticky; top: 0; z-index: 50;
+  /* Above .selbar (85) and .to-top (95): .nav creates a stacking context, so the
+     search flyout inside it can never paint above them on its own. */
+  position: sticky; top: 0; z-index: 96;
   background: rgba(255, 255, 255, 0.86);
   backdrop-filter: saturate(180%) blur(14px);
   border-bottom: 1px solid var(--hair);
@@ -688,7 +693,16 @@ a.logo-tile { cursor: pointer; }
 /* Subtle content fade-in when a page renders. */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
 .page-anim { animation: fadeUp 0.28s ease both; }
-@media (prefers-reduced-motion: reduce) { .page-anim { animation: none; } .to-top { transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .page-anim { animation: none; }
+  .to-top { transition: none; }
+  html { scroll-behavior: auto; }
+  /* The category-swipe arrow loops forever on every phone/tablet — the clearest
+     vestibular trigger in the file. */
+  .catgrid-hint svg { animation: none; }
+  .gcell.gs-flash { animation: none; }
+  .gs-enter { transition: none; }
+}
 
 /* ---- search results ------------------------------------------------------- */
 #search-files { margin-top: 34px; }
@@ -1024,12 +1038,19 @@ a.logo-tile { cursor: pointer; }
    Global command search — persistent header search + instant-preview flyout
    =========================================================================== */
 .nav-search { position: relative; flex: 1 1 auto; max-width: 480px; margin: 0 auto; min-width: 0; }
+/* The brand lockup and the actions keep their intrinsic width; only the search
+   absorbs the squeeze, so nothing reflows to two lines inside the 64px bar. */
+.brandmark, .nav-actions { flex: 0 0 auto; }
+.brandmark .lib, .nav-link, .req-link span { white-space: nowrap; }
 .nav-search-input {
   width: 100%; height: 40px; padding: 0 66px 0 38px;
   border-radius: var(--radius-pill); border: 1px solid var(--hair);
-  background: var(--paper); color: var(--ink); font-family: inherit; font-size: 14px;
+  background: var(--paper); color: var(--ink); font-family: inherit;
+  /* 16px min: iOS Safari zooms the whole page when a focused input is smaller. */
+  font-size: 16px;
   transition: border-color .15s var(--ease), box-shadow .15s var(--ease), background .15s;
 }
+@media (min-width: 901px) { .nav-search-input { font-size: 14px; } }
 .nav-search-input::placeholder { color: var(--stone-2); }
 .nav-search-input:focus { outline: none; border-color: var(--primary-600); box-shadow: 0 0 0 4px rgba(127, 179, 178, .28); background: #fff; }
 .nav-search-ic { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: var(--stone); pointer-events: none; }
@@ -1052,6 +1073,10 @@ a.logo-tile { cursor: pointer; }
 .gs-group:first-child { padding-top: 6px; }
 .gs-row { display: flex; align-items: center; gap: 11px; width: 100%; padding: 7px 9px; border: none; background: none; border-radius: 10px; cursor: pointer; text-align: left; font-family: inherit; scroll-margin: 8px; }
 .gs-row:hover, .gs-row.active { background: var(--primary-050); }
+/* The mint tint alone is 1.10:1 against the popup — invisible as the keyboard
+   selection cue. The bar carries the state at 7:1. */
+.gs-row.active { box-shadow: inset 3px 0 0 var(--primary-600); }
+.gs-empty a { text-decoration: underline; }
 .gs-thumb { position: relative; flex: 0 0 auto; width: 42px; height: 42px; border-radius: 9px; border: 1px solid var(--hair); background: var(--mist); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .gs-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
 .gs-thumb.is-video { background: var(--ink); border-color: var(--ink); }
@@ -1086,14 +1111,36 @@ a.logo-tile { cursor: pointer; }
   100% { box-shadow: 0 0 0 0 rgba(19, 71, 70, 0); }
 }
 
-/* header search collapses onto its own row on narrow screens */
-@media (max-width: 760px) {
-  .nav-inner { flex-wrap: wrap; height: auto; padding: 10px 0; row-gap: 10px; }
+/* Header search drops to its own full-width row once the single-line layout
+   stops fitting (~875px), not at 760px — between those the brand lockup and the
+   nav links were wrapping to two lines inside a fixed-height bar. */
+@media (max-width: 900px) {
+  /* padding-block only: the shorthand would zero .wrap's side gutters and make
+     the header the one band on the page that bleeds to the screen edge. */
+  .nav-inner { flex-wrap: wrap; height: auto; padding-block: 10px; row-gap: 10px; }
   .brandmark { order: 1; }
   .nav-actions { order: 2; margin-left: auto; }
   .nav-search { order: 3; flex-basis: 100%; max-width: none; margin: 0; }
   .gs-pop { width: 100%; left: 0; transform: none; }
+  /* Two stacked bars now sit above the fold — keep the flyout clear of the
+     on-screen keyboard, which vh units never account for. */
+  .gs-pop { max-height: min(52vh, 460px); }
 }
+@media (max-height: 520px) { .gs-pop { max-height: min(70vh, 300px); } }
+
+/* Anchor jumps must clear the sticky header. */
+html { scroll-padding-top: 84px; }
+@media (max-width: 900px) { html { scroll-padding-top: 128px; } }
+
+/* Touch: no physical keyboard, so the shortcut affordances are noise — and the
+   reclaimed padding widens the usable text area. */
+@media (hover: none) {
+  .nav-search-kbd, .gs-foot-keys { display: none; }
+  .nav-search-input { padding-right: 42px; }
+  .nav-search-clear { width: 30px; height: 30px; }
+}
+/* Keep the 24px pill visual but give the clear button a finger-sized hit area. */
+.nav-search-clear::before { content: ""; position: absolute; inset: -10px; }
 
 /* Tablet & mobile: one horizontal-scroll row of chips (bleeds to the edge) —
    cleaner than cramming 7 cards into a narrow row. */

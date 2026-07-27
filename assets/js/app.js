@@ -1968,7 +1968,14 @@
   // navigable, and jump straight into the folder (opening previewable files in the
   // lightbox). Self-contained: reuses fileIndex() but not the legacy home browse.
   var RS_KEY = "portal_recent_search";
-  function loadRecentSearch() { try { return JSON.parse(localStorage.getItem(RS_KEY) || "[]"); } catch (e) { return []; } }
+  function loadRecentSearch() {
+    // Shape-check as well as parse: a non-array value would survive JSON.parse
+    // and then throw on .map(), blanking the whole dropdown.
+    try {
+      var a = JSON.parse(localStorage.getItem(RS_KEY) || "[]");
+      return Array.isArray(a) ? a.filter(function (x) { return typeof x === "string"; }) : [];
+    } catch (e) { return []; }
+  }
   function pushRecentSearch(q) {
     q = (q || "").trim(); if (!q) return;
     try {
@@ -1979,14 +1986,56 @@
   function wireGlobalSearch() {
     var input = $("#gsearch"); if (!input) return;
     var wrap = $("#nav-search"), pop = $("#gs-pop"), clearBtn = $("#gsearch-clear");
+    var list = $("#gs-list"), foot = $("#gs-foot"), empty = $("#gs-empty"), live = $("#gs-live");
+    if (!wrap || !pop || !list || !foot || !empty) return;
     var product = PRIMARY;
     var rows = [], activeI = -1, isOpen = false;
 
-    input.placeholder = "Search " + (product.total || "") + " files…";
+    // Respect the OS "reduce motion" setting for the jump scroll + flash.
+    function reduceMotion() {
+      return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    }
+    function scrollBehavior() { return reduceMotion() ? "auto" : "smooth"; }
+    var liveTimer = null;
+    function announce(msg) {
+      if (!live) return;
+      clearTimeout(liveTimer);
+      liveTimer = setTimeout(function () { live.textContent = msg; }, 250);
+    }
 
     function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
     function qterms(q) { return q.toLowerCase().split(/\s+/).filter(Boolean); }
-    function subseq(hay, t) { var i = 0; for (var j = 0; j < hay.length && i < t.length; j++) { if (hay[j] === t[i]) i++; } return i === t.length; }
+    // Bounded Levenshtein — real typo tolerance ("pakaging" → Packaging).
+    // Subsequence matching was tried first and was far too loose: the letters of
+    // "goal" appear in order in most filenames, so it matched the whole catalogue.
+    function editWithin(a, b, max) {
+      if (Math.abs(a.length - b.length) > max) return false;
+      var prev = [], cur = [], i, j;
+      for (j = 0; j <= b.length; j++) prev[j] = j;
+      for (i = 1; i <= a.length; i++) {
+        cur = [i];
+        var best = i;
+        for (j = 1; j <= b.length; j++) {
+          cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1,
+            prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+          if (cur[j] < best) best = cur[j];
+        }
+        if (best > max) return false;      // whole row already too far
+        prev = cur;
+      }
+      return prev[b.length] <= max;
+    }
+    function fuzzyHit(text, t) {
+      var max = t.length >= 8 ? 2 : 1;
+      var words = text.toLowerCase().split(/[^a-z0-9]+/);
+      for (var i = 0; i < words.length; i++) {
+        var w = words[i];
+        if (!w) continue;
+        if (editWithin(w, t, max)) return true;
+        if (w.length > t.length && editWithin(w.slice(0, t.length), t, max)) return true;
+      }
+      return false;
+    }
     function hl(label, ts) {
       var safe = escapeHTML(label);
       if (!ts.length) return safe;
@@ -1994,16 +2043,46 @@
       catch (e) { return safe; }
     }
 
-    // Product-scoped file/video index + folder (category) jump targets.
-    var idx = fileIndex().filter(function (r) { return r.product.brand === product.brand; });
+    // Folder (category) jump targets — the folders actually shown as tabs.
     var cats = Object.keys(product.folders)
       .filter(function (f) { return f !== "In-Store Marketing"; })
       .sort(function (a, b) { return folderRank(a) - folderRank(b); })
       .map(function (f) { return { kind: "cat", folder: f, name: typeLabel(f), count: (product.folders[f] || []).length }; });
+    var catFolders = {};
+    cats.forEach(function (c) { catFolders[c.folder] = true; });
+
+    // Searchable index, scoped to THIS product and to folders reachable from the
+    // category tabs. Anything outside that renders a result which silently goes
+    // nowhere when clicked (other products' files, In-Store Marketing).
+    var idx = fileIndex().filter(function (r) {
+      if (r.product !== product) return false;
+      return r.video ? true : !!catFolders[r.folder];
+    });
+    // The how-to videos are ALSO files in the "Videos" folder. Keep the video
+    // entry (it plays) and drop the duplicate file row (which would only open a
+    // frozen poster frame in the image lightbox).
+    var vidNames = {}, droppedFmt = {};
+    idx.forEach(function (r) { if (r.video) vidNames[String(r.label).toLowerCase()] = true; });
+    idx = idx.filter(function (r) {
+      if (r.video) return true;
+      var base = String(r.label).toLowerCase().replace(/\.[a-z0-9]+$/, "");
+      if (!vidNames[base]) return true;
+      // Carry the dropped file's real format across so "mp4" still finds it.
+      droppedFmt[base] = (r.file.format || "").toLowerCase();
+      return false;
+    });
+    // Match against name/folder/format only. The shared `hay` also carries the
+    // brand and product name, which every record has — so gating on it made any
+    // substring of "grenco medical elite ii" return the whole catalogue.
+    idx.forEach(function (r) {
+      var extra = r.video ? " video " + (droppedFmt[String(r.label).toLowerCase()] || "") : "";
+      r.shay = (r.label + " " + r.folder + " " + (r.file.format || "") + extra).toLowerCase();
+    });
+    input.placeholder = "Search " + idx.length + " files…";
 
     function scoreFile(r, ts, qj) {
       var name = r.label.toLowerCase(), fmt = (r.file.format || "").toLowerCase(), folder = r.folder.toLowerCase();
-      for (var i = 0; i < ts.length; i++) { if (r.hay.indexOf(ts[i]) === -1) return -1; }
+      for (var i = 0; i < ts.length; i++) { if (r.shay.indexOf(ts[i]) === -1) return -1; }
       var s = 0;
       if (name === qj) s += 1000; else if (name.indexOf(qj) === 0) s += 320; else if (name.indexOf(qj) > -1) s += 170;
       ts.forEach(function (t) {
@@ -2031,10 +2110,10 @@
         var sc = scoreFile(r, ts, qj);
         if (sc >= 0) hits.push({ r: r, sc: sc });
       });
-      // typo / loose fallback when a single longer term finds nothing exact
+      // Typo tolerance: only when nothing matched exactly.
       if (!hits.length && ts.length === 1 && ts[0].length >= 4) {
         idx.forEach(function (r) {
-          if (subseq(r.label.toLowerCase(), ts[0]) || subseq(r.hay, ts[0])) hits.push({ r: r, sc: 3 });
+          if (fuzzyHit(r.label + " " + r.folder, ts[0])) hits.push({ r: r, sc: 3 });
         });
       }
       hits.sort(function (a, b) { return b.sc - a.sc || folderRank(a.r.folder) - folderRank(b.r.folder); });
@@ -2058,6 +2137,7 @@
       var media = f.thumb ? '<img src="' + f.thumb + '" alt="" loading="lazy"/>' : icon(typeIcon[f.type] || "file");
       return '<span class="gs-thumb' + (vid ? " is-video" : "") + '">' + media + (vid ? '<span class="gs-play">' + icon("play") + "</span>" : "") + "</span>";
     }
+    var MAX_PER_GROUP = 8;
     function rowHTML(it, i, ts) {
       var name, sub, fmt = "";
       if (it.kind === "cat") { name = escapeHTML(it.name); sub = "Category · " + it.count + (it.count === 1 ? " file" : " files"); }
@@ -2067,27 +2147,38 @@
         sub = folderLabel(it.r.folder) + (it.kind === "video" ? " · Video" : "");
         if (it.r.file.format && it.kind !== "video") fmt = '<span class="gs-fmt">' + escapeHTML(it.r.file.format) + "</span>";
       }
-      return '<button class="gs-row" role="option" id="gs-row-' + i + '" data-i="' + i + '" tabindex="-1">' +
+      return '<button class="gs-row" role="option" aria-selected="false" id="gs-row-' + i + '" data-i="' + i + '" tabindex="-1">' +
         rowThumb(it) +
         '<span class="gs-tx"><span class="gs-name">' + name + '</span><span class="gs-sub">' + sub + "</span></span>" +
-        fmt + '<span class="gs-enter">↵</span></button>';
+        fmt + '<span class="gs-enter" aria-hidden="true">↵</span></button>';
     }
 
+    // Options render into #gs-list; the footer and empty state are siblings so
+    // the listbox owns nothing but options. Long result sets are capped —
+    // an instant-preview list that dumps the whole catalogue isn't a preview.
     function paint(groups, footNote, ts) {
-      rows = []; var html = "";
+      rows = []; var html = "", hidden = 0;
       groups.forEach(function (g) {
         if (!g.items.length) return;
-        if (g.label) html += '<div class="gs-group">' + g.label + "</div>";
-        g.items.forEach(function (it) { var i = rows.length; rows.push(it); html += rowHTML(it, i, ts || []); });
+        var shown = g.items.slice(0, MAX_PER_GROUP);
+        hidden += g.items.length - shown.length;
+        html += '<div role="group" aria-label="' + escapeHTML(g.label || "Results") + '">' +
+          (g.label ? '<div class="gs-group">' + escapeHTML(g.label) + "</div>" : "");
+        shown.forEach(function (it) { var i = rows.length; rows.push(it); html += rowHTML(it, i, ts || []); });
+        html += "</div>";
       });
-      html += '<div class="gs-foot"><span>' + footNote + '</span>' +
-        '<span class="gs-foot-keys"><kbd>↑</kbd><kbd>↓</kbd> to move <kbd>↵</kbd> open <kbd>esc</kbd></span></div>';
-      pop.innerHTML = html;
-      $$(".gs-row", pop).forEach(function (b) {
-        b.addEventListener("mousemove", function () { setActive(+b.getAttribute("data-i")); });
+      list.innerHTML = html; list.hidden = false; empty.hidden = true;
+      foot.innerHTML = '<span>' + footNote + (hidden ? " · showing top " + rows.length : "") + "</span>" +
+        '<span class="gs-foot-keys"><kbd>↑</kbd><kbd>↓</kbd> to move <kbd>↵</kbd> open <kbd>esc</kbd></span>';
+      foot.hidden = false;
+      $$(".gs-row", list).forEach(function (b) {
+        // Pointer hover must not scroll the list — that shifts a new row under
+        // a stationary cursor and re-fires hover.
+        b.addEventListener("mousemove", function () { setActive(+b.getAttribute("data-i"), true); });
         b.addEventListener("click", function () { choose(rows[+b.getAttribute("data-i")]); });
       });
       activeI = rows.length ? 0 : -1; syncActive();
+      announce(footNote + (hidden ? ", showing top " + rows.length : ""));
     }
 
     function renderEmptyState() {
@@ -2095,16 +2186,20 @@
       var rec = loadRecentSearch();
       if (rec.length) groups.push({ label: "Recent", items: rec.map(function (q) { return { kind: "recent", q: q }; }) });
       groups.push({ label: "Browse by category", items: cats.slice() });
-      paint(groups, product.total + " files · " + cats.length + " categories", []);
+      paint(groups, idx.length + " files · " + cats.length + " categories", []);
     }
     function renderQuery(q) {
       var ts = qterms(q), res = build(q);
       if (!res.total) {
         rows = []; activeI = -1;
-        pop.innerHTML = '<div class="gs-empty">' + icon("search") +
+        list.innerHTML = ""; list.hidden = true; foot.hidden = true;
+        input.removeAttribute("aria-activedescendant");
+        empty.hidden = false;
+        empty.innerHTML = icon("search") +
           '<div><strong>No matches for “' + escapeHTML(q) + '”.</strong>' +
           '<span>Try a file type (SVG, PNG, MP4), a folder (packaging, logos, videos), or ' +
-          '<a href="mailto:' + CFG.requestEmail + "?subject=" + encodeURIComponent("Asset request — " + q) + '">request this asset</a>.</span></div></div>';
+          '<a href="mailto:' + CFG.requestEmail + "?subject=" + encodeURIComponent("Asset request — " + q) + '">request this asset</a>.</span></div>';
+        announce("No matches for " + q);
         return;
       }
       paint([
@@ -2119,36 +2214,59 @@
     function refresh() {
       var q = input.value.trim();
       wrap.classList.toggle("has-q", !!input.value);
-      if (q) renderQuery(q); else renderEmptyState();
-      openPop();
+      openPop();                       // open before painting so the active option
+      if (q) renderQuery(q); else renderEmptyState();   // is in the a11y tree
     }
-    function setActive(i) { activeI = i; syncActive(); }
-    function syncActive() {
-      $$(".gs-row", pop).forEach(function (b, i) { b.classList.toggle("active", i === activeI); });
-      var el = activeI >= 0 ? $("#gs-row-" + activeI, pop) : null;
-      if (el) { input.setAttribute("aria-activedescendant", el.id); el.scrollIntoView({ block: "nearest" }); }
-      else input.removeAttribute("aria-activedescendant");
+    function setActive(i, fromPointer) { activeI = i; syncActive(fromPointer); }
+    function syncActive(fromPointer) {
+      $$(".gs-row", list).forEach(function (b, i) {
+        var on = i === activeI;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      var el = activeI >= 0 ? $("#gs-row-" + activeI, list) : null;
+      if (el) {
+        input.setAttribute("aria-activedescendant", el.id);
+        if (!fromPointer) el.scrollIntoView({ block: "nearest" });
+      } else input.removeAttribute("aria-activedescendant");
     }
 
     // ---- selection -> jump to the asset --------------------------------------
-    function scrollToDocs() { var h = $("#docs-head"); if (h) h.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    // Focus must land on the destination: blurring to <body> strands keyboard
+    // and screen-reader users at the top of the page.
+    function focusTarget(el) {
+      if (!el) return;
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+      try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+    }
+    function scrollToDocs() {
+      var h = $("#docs-head");
+      if (h) { h.scrollIntoView({ behavior: scrollBehavior(), block: "start" }); focusTarget(h); }
+    }
     function openCat(folder) { openDetail(product, folder, true); setTimeout(scrollToDocs, 40); }
     function openFile(r) {
       openDetail(product, r.folder, true);
       var key = fileKey(r.folder, r.file);
       var cell = $$(".gcell", $("#gallery")).filter(function (c) { return c.getAttribute("data-key") === key; })[0];
       if (!cell) { scrollToDocs(); return; }
-      cell.scrollIntoView({ behavior: "smooth", block: "center" });
-      cell.classList.add("gs-flash");
-      setTimeout(function () { cell.classList.remove("gs-flash"); }, 1700);
-      var th = $(".gthumb[data-lbidx]", cell);   // previewable → pop straight into the lightbox
+      cell.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
+      focusTarget(cell);
+      if (!reduceMotion()) {
+        cell.classList.add("gs-flash");
+        setTimeout(function () { cell.classList.remove("gs-flash"); }, 1700);
+      }
+      // Only still images get the lightbox. A video file there would show a
+      // frozen poster frame with no way to play it.
+      if (r.file.type === "video") return;
+      var th = $(".gthumb[data-lbidx]", cell);
       if (th) setTimeout(function () { th.click(); }, 90);
     }
     function openVideo(r) {
       openDetail(product, null, true);
       var card = $$(".vcard").filter(function (c) { var t = $(".vtitle", c); return t && t.textContent.trim() === r.file.name; })[0];
-      if (!card) return;
-      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (!card) { scrollToDocs(); return; }
+      card.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
+      focusTarget(card);
       var play = $(".vthumb.vplay", card) || $("[data-play]", card) || $("[data-watch]", card);
       if (play) setTimeout(function () { play.click(); }, 320);
     }
@@ -2156,7 +2274,7 @@
       if (!it) return;
       if (it.kind === "recent") { input.value = it.q; refresh(); return; }
       pushRecentSearch(input.value);
-      input.blur(); closePop();
+      closePop();
       if (it.kind === "cat") openCat(it.folder);
       else if (it.kind === "video") openVideo(it.r);
       else openFile(it.r);
@@ -2166,13 +2284,24 @@
     input.addEventListener("input", refresh);
     input.addEventListener("focus", function () { if (!isOpen) refresh(); });
     input.addEventListener("keydown", function (e) {
+      // Never steal keys while an IME candidate window is open.
+      if (e.isComposing || e.keyCode === 229) return;
       if (e.key === "ArrowDown") { e.preventDefault(); if (!isOpen) { refresh(); return; } if (rows.length) setActive(Math.min(activeI + 1, rows.length - 1)); }
-      else if (e.key === "ArrowUp") { e.preventDefault(); if (rows.length) setActive(Math.max(activeI - 1, 0)); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); if (!isOpen) { refresh(); return; } if (rows.length) setActive(Math.max(activeI - 1, 0)); }
       else if (e.key === "Enter") { if (isOpen && rows.length) { e.preventDefault(); choose(rows[activeI >= 0 ? activeI : 0]); } }
-      else if (e.key === "Escape") { if (input.value) { input.value = ""; wrap.classList.remove("has-q"); refresh(); } else { closePop(); input.blur(); } }
+      else if (e.key === "Escape") {
+        // Escape dismisses first (keeping what was typed); a second one clears.
+        e.preventDefault();
+        if (isOpen) closePop();
+        else if (input.value) { input.value = ""; wrap.classList.remove("has-q"); announce("Search cleared"); }
+      }
     });
     clearBtn.addEventListener("click", function () { input.value = ""; wrap.classList.remove("has-q"); input.focus(); refresh(); });
     document.addEventListener("mousedown", function (e) { if (isOpen && !wrap.contains(e.target)) closePop(); });
+    // Tabbing away must not leave a 560px overlay open reporting aria-expanded.
+    wrap.addEventListener("focusout", function (e) {
+      if (isOpen && !wrap.contains(e.relatedTarget)) closePop();
+    });
   }
 
   // ---- wire up the static shell -------------------------------------------
@@ -2280,7 +2409,11 @@
         else if (e.key === "ArrowRight") lbStep(1);
         return;
       }
-      if (e.key === "/" && !typing) { e.preventDefault(); var s = $("#gsearch") || $("#search"); if (s) s.focus(); }
+      // Don't swallow browser/extension chords, and treat rich-text areas as typing.
+      if (e.key === "/" && !typing && !(el && el.isContentEditable) &&
+          !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault(); var s = $("#gsearch"); if (s) s.focus();
+      }
     });
 
     // floating scroll-to-top — shows once you're a screen or two down
