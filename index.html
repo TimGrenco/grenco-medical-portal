@@ -84,66 +84,10 @@
     </div>
   </section>
 
-  <!-- BROWSE BAR — primary navigation; sticks under the nav while scrolling -->
-  <section class="browse" id="browse">
-    <div class="wrap browse-inner">
-      <div class="browse-top">
-        <!-- Single brand — the toggle is hidden but kept for the app's state sync. -->
-        <div class="toggle single" id="view-toggle" role="group" aria-label="Brand filter" hidden>
-          <button class="on" data-view="grencomedical">Grenco Medical</button>
-        </div>
-        <div class="browse-search">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input id="search" type="text" placeholder="Search products, files, formats…" aria-label="Search all assets" />
-          <button id="search-clear" class="search-clear" type="button" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-        </div>
-        <span class="browse-count" id="browse-count"></span>
-      </div>
-    </div>
-  </section>
 
   <!-- BODY -->
   <main class="wrap body">
     <div id="home">
-      <div class="filterbar" id="active-filters"></div>
-
-      <div class="section-head">
-        <h2 id="all-title">Current products</h2>
-        <span class="badge" id="count-badge">0</span>
-        <div class="viewmode" id="view-mode" role="group" aria-label="Layout">
-          <button class="on" data-layout="grid" title="Grid view" aria-label="Grid view"></button>
-          <button data-layout="list" title="List view" aria-label="List view"></button>
-        </div>
-        <div class="sort" id="sort-toggle" role="group" aria-label="Sort products">
-          <button class="on" data-sort="featured">Featured</button>
-          <button data-sort="az">A–Z</button>
-        </div>
-      </div>
-      <div class="grid" id="all-grid"></div>
-
-      <!-- SEARCH: matching individual files across the portal (shown while searching) -->
-      <div id="search-files"></div>
-
-      <!-- LOGOS & BRAND ASSETS — current brand's logos (in various formats) -->
-      <section id="resources">
-        <div class="section-head"><h2>Logos and Brand Assets</h2></div>
-        <div class="logo-assets" id="logo-assets"></div>
-      </section>
-
-      <!-- IN-STORE MARKETING MATERIALS — retail displays/posters, aggregated across products -->
-      <section id="instore-section">
-        <div class="section-head"><h2>In-Store Marketing Materials</h2></div>
-        <div id="instore"></div>
-      </section>
-
-      <!-- STORE LOCATOR — retailers request to be listed -->
-      <div id="store-locator"></div>
-
-      <!-- FOLLOW ON SOCIALS — official accounts -->
-      <div id="social-hub"></div>
-
-      <!-- ADDITIONAL / LEGACY PRODUCTS — a single box that opens a dedicated page -->
-      <div id="additional-entry"></div>
     </div>
 
     <div id="detail" class="detail" style="display:none;"></div>

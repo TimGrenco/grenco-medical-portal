@@ -188,22 +188,6 @@
   var FOLDER_TAB_ORDER = ["Product Photos", "Marketing Photos", "Packaging", "Logos", "Marketing", "Videos", "Documents"];
   function folderRank(f) { var i = FOLDER_TAB_ORDER.indexOf(f); return i < 0 ? 99 : i; }
 
-  function buildQuery() {
-    var parts = [];
-    if (state.view !== "grencomedical") parts.push("b=" + state.view);   // default brand → keep its URL clean
-    if (state.type !== "all") parts.push("t=" + encodeURIComponent(state.type));
-    if (state.query) parts.push("q=" + encodeURIComponent(state.query));
-    if (state.sort !== "featured") parts.push("s=" + state.sort);
-    if (state.layout !== "grid") parts.push("l=" + state.layout);
-    return parts.join("&");
-  }
-  // Keep the address bar in sync with the current filters (home view only, so
-  // a refresh or a copied URL reproduces the view). replaceState avoids extra
-  // history entries and never fires hashchange.
-  function syncURL() {
-    var qs = buildQuery();
-    try { history.replaceState(null, "", location.pathname + (qs ? "?" + qs : "")); } catch (e) {}
-  }
   function parseURL() {
     var q = location.search.replace(/^\?/, "");
     if (!q) return;
@@ -224,62 +208,11 @@
     $$("#view-mode button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-layout") === state.layout); });
     var s = $("#search"); if (s && s.value !== state.query) s.value = state.query;
   }
-  function shareView() {
-    var qs = buildQuery();
-    copyText(location.origin + location.pathname + (qs ? "?" + qs : ""), "View link copied");
-  }
-  function clearFilter(k) {
-    // Brand is fixed (single brand), never a clearable filter — so only
-    // type/query are reset here.
-    if (k === "all") { state.type = "all"; state.query = ""; }
-    else if (k === "type") state.type = "all";
-    else if (k === "query") state.query = "";
-    syncControls();
-    navHome();
-  }
-  function renderActiveFilters() {
-    var box = $("#active-filters"); if (!box) return;
-    var chips = [];
-    if (state.type !== "all") chips.push({ k: "type", label: typeLabel(state.type) });
-    if (state.query) chips.push({ k: "query", label: "“" + state.query + "”" });
-    // Nothing filtered → keep the top clean (the bar hides itself when empty).
-    if (!chips.length) { box.innerHTML = ""; return; }
-    var left = chips.map(function (c) {
-      return '<button class="fchip" data-clear="' + c.k + '">' + c.label + ' <span class="x">' + icon("x") + "</span></button>";
-    }).join("") + '<button class="fclear" data-clear="all">Clear all</button>';
-    box.innerHTML =
-      '<div class="fb-left">' + left + "</div>" +
-      '<div class="fb-right"><button class="btn ghost sm" id="share-view">' + icon("link") + " Share view</button></div>";
-    $$("[data-clear]", box).forEach(function (b) {
-      b.addEventListener("click", function () { clearFilter(b.getAttribute("data-clear")); });
-    });
-    $("#share-view").addEventListener("click", shareView);
-  }
 
-  // ---- filtering -----------------------------------------------------------
-  function visibleProducts() {
-    return PRODUCTS.filter(function (p) {
-      if (state.view !== "both" && p.brand !== state.view) return false;
-      if (state.type !== "all" && !p.folders[state.type]) return false;
-      if (state.query) {
-        var q = state.query.toLowerCase();
-        var hay = (p.name + " " + p.category + " " + BRANDS[p.brand].name + " " + p.formats.join(" ")).toLowerCase();
-        if (hay.indexOf(q) === -1) return false;
-      }
-      return true;
-    });
-  }
 
   // ---- search: every product AND every individual file in the portal --------
   // A query matches when ALL whitespace-separated terms are found (AND search),
   // so "dash lifestyle png" narrows sensibly.
-  function matchTerms(hay, terms) {
-    for (var i = 0; i < terms.length; i++) { if (hay.indexOf(terms[i]) === -1) return false; }
-    return true;
-  }
-  function queryTerms(q) {
-    return q.toLowerCase().split(/\s+/).filter(Boolean);
-  }
   // Flat, cached index of every file across every product/folder + how-to videos.
   var _fileIndex = null;
   function fileIndex() {
@@ -307,25 +240,6 @@
     _fileIndex = out;
     return out;
   }
-  // Products (incl. logos + legacy) in the active brand matching the query.
-  function searchProducts(q) {
-    var terms = queryTerms(q), bk = state.view;
-    return PRODUCTS.filter(function (p) {
-      if (p.brand !== bk) return false;
-      var info = p.info || {};
-      var hay = (p.name + " " + (p.category || "") + " " + (p.type || "") + " " + (p.label || "") +
-        " " + BRANDS[p.brand].name + " " + p.formats.join(" ") + " " + (info.description || "") +
-        " " + (info.fullName || "") + " " + ((info.highlights || []).join(" "))).toLowerCase();
-      return matchTerms(hay, terms);
-    });
-  }
-  // Individual files in the active brand matching the query (capped for perf).
-  var SEARCH_FILE_CAP = 80;
-  function searchFiles(q) {
-    var terms = queryTerms(q), bk = state.view;
-    var hits = fileIndex().filter(function (r) { return r.product.brand === bk && matchTerms(r.hay, terms); });
-    return { total: hits.length, items: hits.slice(0, SEARCH_FILE_CAP) };
-  }
 
   // ---- rendering: cover ----------------------------------------------------
   function coverHTML(p) {
@@ -345,11 +259,6 @@
   function wireSwatches(ctx) {
     $$("[data-hex]", ctx).forEach(function (s) {
       s.addEventListener("click", function () { var h = s.getAttribute("data-hex"); copyText(h, "Copied " + h); });
-    });
-  }
-  function wireStyleLinks(ctx) {
-    $$("[data-style]", ctx).forEach(function (b) {
-      b.addEventListener("click", function () { navToStyle(b.getAttribute("data-style")); });
     });
   }
   function wireLogoLinks(ctx) {
@@ -380,65 +289,7 @@
       "</div>";
     }).join("") + "</div>";
   }
-  function renderSocialHub() {
-    var box = $("#social-hub"); if (!box) return;
-    var bk = state.view;
-    box.innerHTML =
-      '<div class="section-head"><h2>' + BRANDS[bk].name + " Online</h2><span class=\"badge\">Official</span></div>" +
-      '<div class="hub-wrap"><div class="hub-brand">' + socialListHTML(bk) + "</div></div>";
-    wireSocial(box);
-  }
 
-  // ---- logos & brand assets ------------------------------------------------
-  // Current brand's logo files (in various formats). The full brand/style guide
-  // is hidden for now — a designer-made guide will replace this later.
-  function renderLogoAssets() {
-    var box = $("#logo-assets"); if (!box) return;
-    var bk = state.view, b = BRANDS[bk];
-    var logoP = PRODUCTS.filter(function (p) { return p.isLogo && p.brand === bk; })[0];
-    if (!logoP) { box.innerHTML = ""; return; }
-
-    var logos = [];
-    Object.keys(logoP.folders || {}).forEach(function (f) { (logoP.folders[f] || []).forEach(function (x) { logos.push(x); }); });
-    var fmts = (logoP.formats || []).map(function (f) { return '<span class="fmt">' + f + "</span>"; }).join("");
-
-    // Preview the primary marks (preferring SVG). "Browse all" shows every
-    // file/format.
-    function rankFmt(f) { return f === "SVG" ? 3 : f === "PNG" ? 2 : 1; }
-    var preview = logos.filter(function (x) { return x.thumb; })
-      .sort(function (a, b) { return rankFmt(b.format) - rankFmt(a.format); })
-      .slice(0, 2);
-    var tiles = preview.map(function (x) {
-      var dark = /white|reverse/i.test(x.name);
-      var media = x.thumb ? '<img src="' + x.thumb + '" alt="' + x.name.replace(/"/g, "") + '" loading="lazy"/>' : window.__icon("photo");
-      return '<button class="logo-tile' + (dark ? " dark" : "") + '" data-logodl="' + (x.file || "#") + '" data-logoname="' + fileLabel(x) + '" title="Download ' + fileLabel(x) + '">' +
-        media + "</button>";
-    }).join("");
-
-    box.innerHTML =
-      '<div class="logo-card">' +
-        '<div class="logo-card-info">' +
-          '<div class="logo-card-name">' + b.name + " Logos</div>" +
-          '<p class="logo-card-note">Official ' + b.name + " logos — black, white &amp; various versions. For approved partner, press &amp; retail use; please don’t alter, recolor, or distort the marks.</p>" +
-          (fmts ? '<div class="logo-card-fmts"><span class="logo-card-fmts-l">Formats</span>' + fmts + "</div>" : "") +
-          '<div class="logo-card-actions">' +
-            '<button class="btn" id="logo-dl">' + icon("download") + " Download all logos</button>" +
-            '<button class="logo-browse-link" id="logo-browse">' + icon("eye") + " Browse all " + logoP.total + " logo files →</button>" +
-          "</div>" +
-        "</div>" +
-        (tiles ? '<div class="logo-preview">' + tiles + "</div>" : "") +
-      "</div>";
-
-    $("#logo-dl").addEventListener("click", function () { downloadAll(logoP); });
-    $("#logo-browse").addEventListener("click", function () { navTo(logoP); });
-    $$("[data-logodl]", box).forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var f = btn.getAttribute("data-logodl");
-        if (f && f !== "#") directDownload(f, btn.getAttribute("data-logoname"));
-        else navTo(logoP);
-      });
-    });
-  }
 
   // ---- brand style guide page ----------------------------------------------
   function swatchBigHTML(c) {
@@ -462,7 +313,6 @@
   }
   function openStyleGuide(bk) {
     var b = BRANDS[bk];
-    if (!b) { renderHome(); return; }
     $("#home").style.display = "none";
     $("#detail").style.display = "none";
     var sgBrowse = $("#browse"); if (sgBrowse) sgBrowse.style.display = "none";
@@ -503,11 +353,6 @@
     wireSwatches(sg);
     wireLogoLinks(sg);
     wireSocial(sg);
-  }
-  function navToStyle(bk) {
-    openStyleGuide(bk);
-    var h = "#style/" + bk;
-    if (location.hash !== h) { ignoreHash = true; location.hash = h; }
   }
 
   // ---- rendering: card -----------------------------------------------------
@@ -555,208 +400,13 @@
     return PRODUCTS.filter(function (p) { return p.brand === bk && !p.isLogo && !isCurrentName(bk, p.name); });
   }
 
-  // ---- rendering: home -----------------------------------------------------
-  function renderHome(noAnim) {
-    $("#detail").style.display = "none";
-    $("#styleguide").style.display = "none";
-    $("#additional").style.display = "none";
-    $("#materials-page").style.display = "none";
-    $("#locator-page").style.display = "none";
-    var trHome = $("#training-page"); if (trHome) trHome.style.display = "none";
-    $("#home").style.display = "block";
-    if (!noAnim) animateIn($("#home"));
-    setTitle("");
-    var browse = $("#browse"); if (browse) browse.style.display = "";
-    var hero = $("#hero"); if (hero) hero.style.display = "";
-    document.body.classList.remove("has-selection");
-
-    // While searching, the browsing sections give way to a results view.
-    var searching = !!state.query;
-    ["resources", "instore-section", "store-locator", "social-hub", "additional-entry"].forEach(function (id) {
-      var el = $(id.charAt(0) === "#" ? id : "#" + id); if (el) el.style.display = searching ? "none" : "";
-    });
-    if (searching) { renderSearch(); syncURL(); return; }
-
-    $("#search-files").innerHTML = "";
-    $("#search-files").style.display = "none";
-
-    // Featured products in scope (brand), logos excluded.
-    var vis = visibleProducts().filter(function (p) { return !p.isLogo; });
-    $("#all-title").textContent = "Featured " + BRANDS[state.view].name + " products";
-
-    var curList = currentList(state.view);
-    var byName = function (a, b) { return a.name.localeCompare(b.name); };
-    // current keeps the curated order by default; A–Z when the sort toggle asks.
-    var current = curList
-      .map(function (n) { return vis.filter(function (p) { return p.name === n; })[0]; })
-      .filter(Boolean);
-    if (state.sort === "az") current = current.slice().sort(byName);
-
-    var browseCount = $("#browse-count");
-    if (browseCount) browseCount.textContent = current.length + (current.length === 1 ? " product" : " products");
-    $("#count-badge").textContent = current.length + (current.length === 1 ? " product" : " products");
-
-    renderActiveFilters();
-
-    var layoutClass = state.layout === "list" ? "grid list" : "grid";
-    var allGrid = $("#all-grid");
-    allGrid.className = layoutClass;
-    allGrid.innerHTML = current.map(function (p) { return cardHTML(p, state.layout); }).join("") || emptyState();
-
-    renderLogoAssets();
-    renderSocialHub();
-    renderInStore();
-    renderStoreLocator();
-    renderAdditionalEntry();
-    bindCards($("#home"));
-    syncURL();
-  }
 
   // Friendly folder label for search result captions.
   function folderLabel(f) { return (typeof typeLabel === "function" ? typeLabel(f) : f); }
 
-  // Search results view: matching products (cards) + matching individual files.
-  function renderSearch() {
-    var q = state.query;
-    var byName = function (a, b) { return a.name.localeCompare(b.name); };
-    var prods = searchProducts(q);
-    if (state.sort === "az") prods = prods.slice().sort(byName);
-    var fileRes = searchFiles(q);
-    var total = prods.length + fileRes.total;
 
-    $("#all-title").textContent = "Search results";
-    var label = total + (total === 1 ? " result" : " results");
-    var bc = $("#browse-count"); if (bc) bc.textContent = label;
-    $("#count-badge").textContent = label;
-    renderActiveFilters();
 
-    var allGrid = $("#all-grid");
-    allGrid.className = state.layout === "list" ? "grid list" : "grid";
-    allGrid.innerHTML = prods.length ? prods.map(function (p) { return cardHTML(p, state.layout); }).join("") : "";
-    bindCards($("#home"));
 
-    var sf = $("#search-files");
-    sf.style.display = "";
-    if (!total) {
-      allGrid.innerHTML = "";
-      sf.innerHTML =
-        '<div class="search-empty">' + icon("search") +
-          "<div><strong>No matches for “" + escapeHTML(q) + "”.</strong>" +
-          "<span>Try a product name (Dash), a file type (PNG, MP4), or a category (lifestyle, packaging).</span></div>" +
-          '<a class="btn ghost sm" href="mailto:' + CFG.requestEmail + "?subject=" +
-            encodeURIComponent("Asset request — " + q) + '">' + icon("mail") + " Request this asset</a>" +
-        "</div>";
-      return;
-    }
-
-    if (!fileRes.total) { sf.innerHTML = ""; return; }
-
-    var tiles = fileRes.items.map(searchFileTile).join("");
-    var more = fileRes.total > fileRes.items.length
-      ? '<p class="sf-more">Showing ' + fileRes.items.length + " of " + fileRes.total +
-        " matching files — refine your search to narrow it down.</p>"
-      : "";
-    sf.innerHTML =
-      '<div class="section-head"><h2>Matching files</h2><span class="badge">' + fileRes.total + "</span></div>" +
-      '<div class="sf-grid">' + tiles + "</div>" + more;
-    bindSearchFiles(sf);
-  }
-
-  function searchFileTile(r) {
-    var f = r.file, isVid = f.type === "video";
-    var safe = r.label.replace(/"/g, "");
-    var media = f.thumb
-      ? '<img src="' + f.thumb + '" alt="' + safe + '" loading="lazy"/>'
-      : icon(typeIcon[f.type] || "photo");
-    var dl = !isVid ? (f.file || f.url || "") : "";
-    var pName = r.product.name.indexOf(BRANDS[r.product.brand].name) === 0 ? r.product.name : BRANDS[r.product.brand].name + " " + r.product.name;
-    return '<div class="sf-cell">' +
-        '<button class="sf-open" data-pid="' + pid(r.product) + '" data-folder="' + r.folder + '" title="Open in ' + pName.replace(/"/g, "") + '">' +
-          '<span class="sf-thumb' + (isVid ? " is-video" : "") + '">' + media + (isVid ? '<span class="sf-play">' + icon("play") + "</span>" : "") + "</span>" +
-          '<span class="sf-meta"><span class="sf-name">' + r.label + "</span>" +
-            '<span class="sf-sub">' + pName + " · " + folderLabel(r.folder) + (f.format ? ' · <span class="sf-fmt">' + f.format + "</span>" : "") + "</span></span>" +
-        "</button>" +
-        (dl ? '<button class="sf-dl" data-sfdl="' + dl + '" data-sfname="' + safe + '"' + (f.file ? ' data-direct="1"' : "") + ' title="Download">' + icon("download") + "</button>" : "") +
-      "</div>";
-  }
-  function bindSearchFiles(ctx) {
-    $$(".sf-open", ctx).forEach(function (b) {
-      b.addEventListener("click", function () { navToFile(b.getAttribute("data-pid"), b.getAttribute("data-folder")); });
-    });
-    $$(".sf-dl", ctx).forEach(function (b) {
-      b.addEventListener("click", function (e) {
-        e.stopPropagation();
-        if (b.getAttribute("data-direct")) directDownload(b.getAttribute("data-sfdl"), b.getAttribute("data-sfname"));
-        else downloadOne(b.getAttribute("data-sfdl"));
-      });
-    });
-  }
-  function navToFile(pidStr, folder) {
-    var p = PRODUCTS.filter(function (x) { return pid(x) === pidStr; })[0];
-    if (!p) return;
-    openDetail(p, folder);
-    var h = productHash(p);
-    if (location.hash !== h) { ignoreHash = true; location.hash = h; }
-  }
-
-  // In-store marketing materials for the current brand — aggregated from each
-  // product's "In-Store Marketing" folder (synced from Dropbox). Retailers browse
-  // what's available and order via email.
-  var INSTORE_FOLDER = "In-Store Marketing";
-  function renderInStore() {
-    var box = $("#instore"); if (!box) return;
-    var bk = state.view, bname = BRANDS[bk].name;
-    // All orderable materials for this brand: brand-level generics + per-product.
-    var mats = [];
-    (window.PORTAL_INSTORE_GENERAL || []).forEach(function (x) { mats.push(x); });
-    currentList(bk)
-      .map(function (n) { return PRODUCTS.filter(function (p) { return p.name === n; })[0]; })
-      .filter(Boolean)
-      .forEach(function (p) { ((p.folders && p.folders[INSTORE_FOLDER]) || []).forEach(function (x) { mats.push(x); }); });
-
-    var orderCta = '<a class="btn" href="#materials">' + icon("mail") + " Order materials</a>";
-    if (!mats.length) {
-      box.innerHTML =
-        '<div class="instore-empty">' +
-          "<p>Brochures, one-sheets, and counter pieces for " + bname +
-            " pharmacies will show here as they’re added — order what you need for your pharmacy.</p>" + orderCta +
-        "</div>";
-      return;
-    }
-
-    // Two preview tiles (like the logos card) — clicking goes to the order page.
-    var tiles = mats.slice(0, 2).map(function (x) {
-      var media = x.thumb ? '<img src="' + x.thumb + '" alt="' + fileLabel(x).replace(/"/g, "") + '" loading="lazy"/>' : window.__icon("photo");
-      return '<a class="logo-tile" href="#materials" title="Order marketing materials">' + media + "</a>";
-    }).join("");
-
-    box.innerHTML =
-      '<div class="logo-card">' +
-        '<div class="logo-card-info">' +
-          '<div class="logo-card-name">Pharmacy Marketing Materials</div>' +
-          '<p class="logo-card-note">Brochures, one-sheets, and counter pieces for ' + bname +
-            " pharmacies — order what you need.</p>" +
-          '<div class="logo-card-actions">' + orderCta +
-            '<span class="instore-count">' + mats.length + " material" + (mats.length === 1 ? "" : "s") + " available</span>" +
-          "</div>" +
-        "</div>" +
-        '<div class="logo-preview">' + tiles + "</div>" +
-      "</div>";
-  }
-
-  // Store-locator sign-up callout — retailers request to be listed.
-  function renderStoreLocator() {
-    var box = $("#store-locator"); if (!box) return;
-    box.innerHTML =
-      '<div class="locator-card">' +
-        '<div class="locator-copy">' +
-          '<div class="locator-eyebrow">Pharmacies &amp; partners</div>' +
-          "<h2>Request pharmacy / partner info</h2>" +
-          "<p>Dispensing or partnering on the Grenco Medical Elite II? Request to be listed and to receive official product and partner information.</p>" +
-        "</div>" +
-        '<a class="btn lg" href="#locator">' + icon("mapPin") + " Request to be listed</a>" +
-      "</div>";
-  }
 
   // Pharmacy Locator call-to-action band — shown at the bottom of the product
   // landing. Pharmacies request to be added to the locator on grencomedical.com.
@@ -771,26 +421,9 @@
       "</div>";
   }
 
-  // Bottom-of-page entry box → opens the dedicated Additional Products page.
-  function renderAdditionalEntry() {
-    var box = $("#additional-entry"); if (!box) return;
-    var bk = state.view, legacy = legacyProducts(bk);
-    if (!legacy.length) { box.innerHTML = ""; return; }
-    box.innerHTML =
-      '<button class="additional-entry-card" id="additional-entry-btn">' +
-        '<span class="ae-main">' +
-          '<span class="ae-title">Additional Products</span>' +
-          '<span class="ae-sub">' + legacy.length + " older " + BRANDS[bk].name +
-            " products we no longer sell — assets kept for partners who still need them.</span>" +
-        "</span>" +
-        '<span class="ae-go">View all →</span>' +
-      "</button>";
-    $("#additional-entry-btn").addEventListener("click", function () { navToAdditional(bk); });
-  }
 
   // Dedicated page listing a brand's legacy products.
   function openAdditional(bk) {
-    if (!BRANDS[bk]) { renderHome(); return; }
     $("#home").style.display = "none";
     $("#detail").style.display = "none";
     $("#styleguide").style.display = "none";
@@ -808,11 +441,6 @@
       '<div class="grid">' + legacy.map(function (p) { return cardHTML(p, "grid"); }).join("") + "</div>";
     $("#add-back").addEventListener("click", navHome);
     bindCards(ad);
-  }
-  function navToAdditional(bk) {
-    openAdditional(bk);
-    var h = "#additional/" + bk;
-    if (location.hash !== h) { ignoreHash = true; location.hash = h; }
   }
 
   // ---- marketing materials order page --------------------------------------
@@ -1306,9 +934,6 @@
       "\n\n" + blocks.join("\n\n");
     window.location.href = "mailto:" + CFG.locatorEmail + "?subject=" +
       encodeURIComponent("Pharmacy Locator Request") + "&body=" + encodeURIComponent(body);
-  }
-  function emptyState() {
-    return '<p style="grid-column:1/-1;color:var(--stone);font-size:14px;padding:30px 0;">No assets match your filters. <a href="mailto:' + CFG.requestEmail + '" style="text-decoration:underline;">Request one →</a></p>';
   }
 
   function bindCards(ctx) {
@@ -1923,10 +1548,6 @@
     });
     downloadFiles(files, p.name);
   }
-  window.__open = function (url) {
-    if (!url || url === "#") { toast("Document coming soon"); return; }
-    window.open(url, "_blank");
-  };
 
   // ---- lightbox / asset viewer ---------------------------------------------
   var lbItems = [], lbIdx = 0;   // items: { src, name, url }
@@ -2325,59 +1946,6 @@
 
     // persistent header search + instant-preview flyout
     wireGlobalSearch();
-
-    // brand toggle
-    $$("#view-toggle button").forEach(function (b) {
-      b.addEventListener("click", function () {
-        $$("#view-toggle button").forEach(function (x) { x.classList.remove("on"); });
-        b.classList.add("on");
-        state.view = b.getAttribute("data-view");
-        navHome();
-      });
-    });
-    // type filter chips (no "All assets" chip — clicking an active chip clears it)
-    $$("#type-filters .chip").forEach(function (c) {
-      c.addEventListener("click", function () {
-        var t = c.getAttribute("data-type");
-        var deselect = state.type === t;
-        state.type = deselect ? "all" : t;
-        $$("#type-filters .chip").forEach(function (x) { x.classList.remove("on"); });
-        if (!deselect) c.classList.add("on");
-        navHome();
-      });
-    });
-    // sort toggle
-    $$("#sort-toggle button").forEach(function (b) {
-      b.addEventListener("click", function () {
-        $$("#sort-toggle button").forEach(function (x) { x.classList.remove("on"); });
-        b.classList.add("on");
-        state.sort = b.getAttribute("data-sort");
-        renderHome();
-      });
-    });
-    // grid / list view toggle
-    $$("#view-mode button").forEach(function (b) {
-      b.innerHTML = icon(b.getAttribute("data-layout"));
-      b.addEventListener("click", function () {
-        $$("#view-mode button").forEach(function (x) { x.classList.remove("on"); });
-        b.classList.add("on");
-        state.layout = b.getAttribute("data-layout");
-        renderHome();
-      });
-    });
-    // search — live results as you type (no page fade re-trigger per keystroke)
-    var searchEl = $("#search");
-    var clearEl = $("#search-clear");
-    var syncClear = function () { if (clearEl) clearEl.classList.toggle("show", !!searchEl.value); };
-    searchEl.addEventListener("input", function (e) {
-      state.query = e.target.value.trim();
-      syncClear();
-      renderHome(true);
-    });
-    if (clearEl) clearEl.addEventListener("click", function () {
-      searchEl.value = ""; state.query = ""; syncClear(); renderHome(true); searchEl.focus();
-    });
-    syncClear();
 
     // lightbox / asset viewer
     $("#lb-copy").innerHTML = icon("link") + " Copy link";
