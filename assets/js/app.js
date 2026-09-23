@@ -14,6 +14,13 @@
   // ---- tiny helpers --------------------------------------------------------
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
+  // A non-<button> element given role="button" must also answer Enter and Space,
+  // or keyboard users can focus it and then do nothing with it.
+  function pressable(el) {
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.click(); }
+    });
+  }
   var today = new Date();
   function daysSince(iso) { return Math.floor((today - new Date(iso)) / 86400000); }
   function isNew(p) { return daysSince(p.added) <= CFG.newWindowDays; }
@@ -313,6 +320,7 @@
   }
   function openStyleGuide(bk) {
     var b = BRANDS[bk];
+    setTitle("Brand & Style Guide");
     $("#home").style.display = "none";
     $("#detail").style.display = "none";
     var sgBrowse = $("#browse"); if (sgBrowse) sgBrowse.style.display = "none";
@@ -424,6 +432,7 @@
 
   // Dedicated page listing a brand's legacy products.
   function openAdditional(bk) {
+    setTitle("Additional " + ((BRANDS[bk] && BRANDS[bk].name) || "") + " Products");
     $("#home").style.display = "none";
     $("#detail").style.display = "none";
     $("#styleguide").style.display = "none";
@@ -653,6 +662,13 @@
       el.addEventListener("click", function () {
         openVideoModal(el.getAttribute("data-play"), el.getAttribute("data-title"), el.getAttribute("data-dl"), el.getAttribute("data-dlname"));
       });
+      pressable(el);
+    });
+    // Every current video is a Dropbox MP4 (data-watch), and until this binding
+    // the training page's "Click to watch" thumbnails did nothing at all.
+    $$("[data-watch]", ctx).forEach(function (el) {
+      el.addEventListener("click", function () { window.open(el.getAttribute("data-watch"), "_blank", "noopener"); });
+      pressable(el);
     });
     $$("[data-vdl]", ctx).forEach(function (b) {
       b.addEventListener("click", function (e) { e.stopPropagation(); directDownload(b.getAttribute("data-vdl"), b.getAttribute("data-vname")); });
@@ -1007,7 +1023,7 @@
       // product's asset folders (photos, logos, packaging, marketing, docs…).
       var catCards = '<div class="catgrid" id="asset-nav">' + folderNames.map(function (f) {
         var n = p.folders[f].length, empty = n === 0;
-        return '<button class="catcard' + (f === active ? " on" : "") + (empty ? " is-empty" : "") + '" data-folder="' + f + '"' + (empty ? " disabled" : "") + ">" +
+        return '<button class="catcard' + (f === active ? " on" : "") + (empty ? " is-empty" : "") + '" data-folder="' + f + '" aria-pressed="' + (f === active ? "true" : "false") + '"' + (empty ? " disabled" : "") + ">" +
           '<span class="catcard-ic">' + icon(FOLDER_ICON[f] || "file") + "</span>" +
           '<span class="catcard-tx"><span class="catcard-name">' + typeLabel(f) + "</span>" +
           '<span class="catcard-c">' + (empty ? "Coming soon" : n + (n === 1 ? " file" : " files")) + "</span></span>" +
@@ -1077,10 +1093,12 @@
         el.addEventListener("click", function () {
           openVideoModal(el.getAttribute("data-play"), el.getAttribute("data-title"), el.getAttribute("data-dl"), el.getAttribute("data-dlname"));
         });
+        pressable(el);
       });
       // Large Dropbox videos → open Dropbox's own player in a new tab.
       $$("[data-watch]", d).forEach(function (el) {
         el.addEventListener("click", function () { window.open(el.getAttribute("data-watch"), "_blank", "noopener"); });
+        pressable(el);
       });
       $$("[data-vdl]", d).forEach(function (b) {
         b.addEventListener("click", function (e) { e.stopPropagation(); directDownload(b.getAttribute("data-vdl"), b.getAttribute("data-vname")); });
@@ -1134,7 +1152,14 @@
         // Category cards sit directly above the gallery, so switching folders
         // just updates the gallery in place — no scrolling needed.
         if (t.disabled) return;
-        t.addEventListener("click", function () { active = t.getAttribute("data-folder"); render(); });
+        t.addEventListener("click", function () {
+          var hadFocus = document.activeElement === t;
+          active = t.getAttribute("data-folder"); render();
+          // render() replaces every card, so without this a keyboard user who
+          // picks a folder is dropped back to <body>.
+          var again = hadFocus && $('.catcard[data-folder="' + active + '"]', d);
+          if (again) again.focus({ preventScroll: true });
+        });
       });
       syncSelection();
     }
@@ -1397,12 +1422,13 @@
       return (
         '<div class="gcell' + (on ? " sel" : "") + '" data-key="' + key + '">' +
           '<label class="gselect"><input type="checkbox" class="gcheck"' + (on ? " checked" : "") + ' aria-label="Select ' + fileLabel(file) + '"/></label>' +
-          '<div class="gthumb' + (ext ? " is-video" : "") + '"' + lbAttr + ytAttr + ">" + thumb +
+          '<div class="gthumb' + (ext ? " is-video" : "") + '"' + lbAttr + ytAttr +
+            ((lbAttr || ytAttr) ? ' role="button" tabindex="0" aria-label="' + escapeHTML((ext ? "Play " : "Preview ") + fileLabel(file)) + '"' : "") + ">" + thumb +
             (file.format ? '<span class="gfmt">' + file.format + "</span>" : "") + "</div>" +
           '<div class="gbar"><span class="gn">' + fileLabel(file) + '</span>' +
           '<span class="ga">' +
-            '<span data-copy="' + (file.url || "#") + '" title="Copy link">' + icon("link") + "</span>" +
-            '<span data-dl="' + (ext ? (file.url || "#") : (fileDl(file) || "#")) + '" data-name="' + fileLabel(file) + '" title="' + (ext ? "Watch on YouTube" : "Download") + '">' + icon(ext ? "play" : "download") + "</span>" +
+            '<span data-copy="' + (file.url || "#") + '" title="Copy link" role="button" tabindex="0" aria-label="' + escapeHTML("Copy link to " + fileLabel(file)) + '">' + icon("link") + "</span>" +
+            '<span data-dl="' + (ext ? (file.url || "#") : (fileDl(file) || "#")) + '" data-name="' + fileLabel(file) + '" title="' + (ext ? "Watch on YouTube" : "Download") + '" role="button" tabindex="0" aria-label="' + escapeHTML((ext ? "Watch " + fileLabel(file) + " on YouTube" : "Download " + fileLabel(file))) + '">' + icon(ext ? "play" : "download") + "</span>" +
           "</span></div>" +
         "</div>"
       );
@@ -1437,6 +1463,7 @@
     $$("[data-dl]", $("#gallery")).forEach(function (b) {
       b.addEventListener("click", function () { directDownload(b.getAttribute("data-dl"), b.getAttribute("data-name")); });
     });
+    $$('[role="button"]', $("#gallery")).forEach(pressable);
     $$("[data-copy]", $("#gallery")).forEach(function (b) {
       b.addEventListener("click", function () {
         var url = b.getAttribute("data-copy");
@@ -1530,8 +1557,13 @@
   // Turn a Dropbox shared-folder link into a direct "download whole folder as
   // .zip" URL (forces dl=1).
   function dropboxZipUrl(link) {
-    if (/[?&]dl=/.test(link)) return link.replace(/([?&]dl=)\d/, "$11");
-    return link + (link.indexOf("?") === -1 ? "?dl=1" : "&dl=1");
+    var u = /[?&]dl=/.test(link) ? link.replace(/([?&]dl=)\d/, "$11")
+      : link + (link.indexOf("?") === -1 ? "?dl=1" : "&dl=1");
+    // Safari (iPhone AND Mac) gets an HTML "open in the app" page from
+    // www.dropbox.com even with dl=1, so the file never downloads. The content
+    // host serves the file itself, with its real filename, to every browser.
+    // Single files only — the content host 404s folder (scl/fo) zip links.
+    return u.replace(/^https:\/\/www\.dropbox\.com\/scl\/fi\//, "https://dl.dropboxusercontent.com/scl/fi/");
   }
   function downloadAll(p) {
     // Real Dropbox: download the whole product folder as a .zip from the shared
@@ -1551,16 +1583,22 @@
 
   // ---- lightbox / asset viewer ---------------------------------------------
   var lbItems = [], lbIdx = 0;   // items: { src, name, url }
+  var lbReturn = null;
   function openLightbox(items, idx) {
     lbItems = items && items.length ? items : [];
     lbIdx = idx || 0;
     showLb();
+    // Remember the opener and move focus in: a dialog that leaves focus behind
+    // it can't be operated or even noticed with a keyboard or screen reader.
+    if (!lbOpen()) lbReturn = document.activeElement;
     $("#lightbox").classList.add("open");
+    $("#lb-close").focus();
   }
   function lbCurrent() { return lbItems[lbIdx] || {}; }
   function showLb() {
     var it = lbCurrent();
     $("#lightbox img").src = it.src || "";
+    $("#lightbox img").alt = it.name || "Asset preview";
     $("#lb-name").textContent = it.name || "";
     $("#lb-count").textContent = lbItems.length > 1 ? (lbIdx + 1) + " / " + lbItems.length : "";
     var multi = lbItems.length > 1 ? "flex" : "none";
@@ -1572,7 +1610,11 @@
     lbIdx = (lbIdx + d + lbItems.length) % lbItems.length;
     showLb();
   }
-  function closeLightbox() { $("#lightbox").classList.remove("open"); $("#lightbox img").src = ""; lbItems = []; }
+  function closeLightbox() {
+    $("#lightbox").classList.remove("open"); $("#lightbox img").src = ""; lbItems = [];
+    if (lbReturn && lbReturn.isConnected) lbReturn.focus();
+    lbReturn = null;
+  }
   function lbOpen() { return $("#lightbox").classList.contains("open"); }
 
   // ---- toast ---------------------------------------------------------------
@@ -1975,6 +2017,13 @@
       if (lbOpen()) {
         if (e.key === "ArrowLeft") lbStep(-1);
         else if (e.key === "ArrowRight") lbStep(1);
+        else if (e.key === "Tab") {
+          // keep focus inside the open lightbox
+          var f = $$("button, a[href]", $("#lightbox")).filter(function (x) { return x.getClientRects().length; });
+          var first = f[0], last = f[f.length - 1];
+          if (e.shiftKey && (el === first || !$("#lightbox").contains(el))) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && (el === last || !$("#lightbox").contains(el))) { e.preventDefault(); first.focus(); }
+        }
         return;
       }
       // Don't swallow browser/extension chords, and treat rich-text areas as typing.

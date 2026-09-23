@@ -283,7 +283,7 @@ window.PORTAL_TRAINING = {
         title: "Product & Regulatory Overview",
         points: [
           "The Elite II is an <strong>internationally certified therapeutic vaporiser</strong> for <strong>dried medicinal cannabis flower</strong>.",
-          "It is a <strong>prescription medical device</strong> — materials must not be used to advertise or promote its supply to the public.",
+          "It is an <strong>ARTG-registered medical device</strong> — materials must not be used to advertise or promote its supply to the public.",
           "Regulatory registrations: <strong>Australia ARTG Entry 526764 (Class IIb)</strong>, <strong>Health Canada HC MDL 113029</strong>, and <strong>Medsafe NZ WAND registered</strong>.",
           "Manufactured under <strong>MDSAP · ISO 13485</strong> certification and assessed against recognised safety and biocompatibility standards.",
         ],
@@ -343,8 +343,8 @@ window.PORTAL_TRAINING = {
         choices: ["A 510 cartridge", "A removable pick tool", "Cannabis flower", "A wall adaptor plug"],
         answer: 1, why: "The box includes the Elite II, a hemp travel case, a protective silicone sleeve, a USB-C charging cable, and a removable pick tool." },
       { q: "How should these assets and the device be positioned to the public?",
-        choices: ["As a consumer lifestyle product to advertise widely", "As a prescription medical device — not for advertising or promoting supply to the public; direct patients to their prescriber", "With a retail price and buy-now links", "However the partner prefers"],
-        answer: 1, why: "It is a prescription medical device; materials must not be used to advertise or promote supply to the public, and patients should speak with their prescriber." },
+        choices: ["As a consumer lifestyle product to advertise widely", "As an ARTG-registered medical device — not for advertising or promoting supply to the public; direct patients to their prescriber", "With a retail price and buy-now links", "However the partner prefers"],
+        answer: 1, why: "It is an ARTG-registered medical device; materials must not be used to advertise or promote supply to the public, and patients should speak with their prescriber." },
     ],
   },
 };
