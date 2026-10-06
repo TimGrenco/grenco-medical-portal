@@ -1337,7 +1337,7 @@
         : (embed ? ' data-play="' + embed + '" data-title="' + safe + '"' + (dl ? ' data-dl="' + dl + '" data-dlname="' + dlname + '"' : "") : "");
 
       var thumb = '<div class="vthumb' + (playable ? " vplay" : "") + '"' +
-        (playable ? trigger + ' role="button" tabindex="0" aria-label="Watch ' + safe + '"' : "") + ">" +
+        (playable ? trigger + ' role="button" tabindex="0" aria-label="Click to watch ' + safe + '"' : "") + ">" +
         poster + '<span class="play-badge">' + icon("play") + "</span>" + (playable ? '<span class="vthumb-hint">Click to watch</span>' : "") + "</div>";
 
       var dlBtn = v.mp4
