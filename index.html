@@ -36,6 +36,8 @@
 
   <!-- Cache-busting: stamp a fresh version each load so edits show up on a normal
        refresh (no hard-refresh needed). Content-hashed images still cache normally. -->
+  <!-- The default view's LCP image; app.js only creates its <img> after load. -->
+  <link rel="preload" as="image" href="assets/elite-ii-hero-screen.webp" fetchpriority="high" />
   <script>document.write('<link rel="stylesheet" href="assets/css/styles.css?v=' + Date.now() + '">');</script>
   <noscript><link rel="stylesheet" href="assets/css/styles.css" /></noscript>
 </head>

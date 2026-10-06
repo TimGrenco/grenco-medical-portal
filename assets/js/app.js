@@ -249,10 +249,14 @@
   }
 
   // ---- rendering: cover ----------------------------------------------------
-  function coverHTML(p) {
+  // hero: the large cover on a product page, which is the page's LCP image.
+  // It loads eagerly at high priority and declares its size; the small card
+  // and row thumbnails stay lazy.
+  function coverHTML(p, hero) {
     if (p.cover) {
       var safe = p.name.replace(/"/g, "");
-      return '<img src="' + p.cover + '" alt="' + safe + '" loading="lazy" onerror="window.__fallback(this,\'' + safe + '\')"/>';
+      var load = hero ? ' fetchpriority="high" width="1100" height="1100"' : ' loading="lazy"';
+      return '<img src="' + p.cover + '" alt="' + safe + '"' + load + ' onerror="window.__fallback(this,\'' + safe + '\')"/>';
     }
     if (p.isLogo) return '<div class="logo-tile"><span>' + BRANDS[p.brand].wordmark + "</span></div>";
     return fallbackHTML(p.name);
@@ -1041,7 +1045,7 @@
       d.innerHTML =
         (home ? "" : '<button class="back" id="back-btn">' + icon("arrowLeft") + " Back to library</button>") +
         '<div class="detail-hero">' +
-          '<div class="detail-cover-lg' + (p.cover ? " clickable" : "") + '"' + (p.cover ? ' id="hero-cover"' : "") + ">" + coverHTML(p) + "</div>" +
+          '<div class="detail-cover-lg' + (p.cover ? " clickable" : "") + '"' + (p.cover ? ' id="hero-cover"' : "") + ">" + coverHTML(p, true) + "</div>" +
           '<div class="detail-info">' +
             '<div class="detail-eyebrow">' + typeLine + "</div>" +
             "<h2>" + fullName + "</h2>" +
